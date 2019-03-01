@@ -76,10 +76,10 @@
 
             img.v-icon {
                 /*@if is-dark-color($valo-menu-background-color) {*/
-                    border: none;
-                    box-shadow: none;
-                    width: 70px;
-                    height: 70px;
+                border: none;
+                box-shadow: none;
+                width: 70px;
+                height: 70px;
                 /*}*/
             }
 
@@ -193,5 +193,92 @@
         .view-content {
             border-radius: 0;
         }
+    }
+
+    .directorywindow {
+        max-height: round(30 * $v-font-size);
+        width: round(35 * $v-font-size);
+        max-width: 90%;
+
+        .v-window-outerheader{
+            background-color: inherit;
+        }
+
+        .v-tabsheet-content > div > .v-scrollable > .v-layout {
+            padding-left: $v-layout-margin-left;
+            padding-right: $v-layout-margin-right;
+        }
+    }
+    
+    .createfolder-window {
+        max-height: round(10 * $v-font-size);
+        width: round(18 * $v-font-size);
+        max-width: 90%;
+    }
+
+    .confirm-window {
+        max-height: round(10 * $v-font-size);
+        width: round(26 * $v-font-size);
+        max-width: 90%;
+    }
+
+    .v-button-borderButton {
+        background: #eee none repeat scroll 0 0;
+        border: 1px solid #b0b0b0;
+        border-radius: 0;
+        color: #181818;
+        cursor: pointer;
+        font-weight: 400;
+        outline: medium none;
+        position: relative;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .v-button-noBorderButton {
+        border: 1px solid #f0f0f0;
+        border-radius: 0;
+        color: #181818;
+        cursor: pointer;
+        font-weight: 400;
+        outline: medium none;
+        position: relative;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .v-button-labelColored {
+        border: none;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        background: transparent;
+        color: #0072C6;
+        cursor: default !important;
+        opacity: 1;
+        &:hover {
+            color: #0072C6;
+            &:after {
+                background: transparent;
+            }
+        }
+        &:active {
+            opacity: 0.7;
+            filter: alpha(opacity = 70);
+            &:after {
+                background: transparent;
+            }
+        }
+    }
+
+    .v-button-labelColored.v-disabled {
+        opacity: 1;
+        filter: alpha(opacity = 50);
+        &:after {
+            display: none;
+        }
+    }
+
+    .InvisibleButton {
+        display: none;
     }
 }

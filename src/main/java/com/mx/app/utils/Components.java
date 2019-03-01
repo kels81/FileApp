@@ -5,6 +5,9 @@
  */
 package com.mx.app.utils;
 
+import com.mx.app.component.ButtonContextMenu;
+import com.mx.app.logic.DirectoryLogic;
+import com.mx.app.logic.FileLogic;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.MenuBar;
@@ -112,6 +115,10 @@ public class Components {
         allDocsLst.addAll(fileLst);
 
         return allDocsLst;
+    }
+    
+     public ButtonContextMenu createButtonContextMenu(Button downloadInvisibleButton, File file, FileLogic viewLogicFile, DirectoryLogic viewLogicDirectory) {
+        return new ButtonContextMenu(downloadInvisibleButton, file, viewLogicFile, viewLogicDirectory);
     }
 
 }

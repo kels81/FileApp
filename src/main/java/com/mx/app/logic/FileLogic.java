@@ -93,7 +93,7 @@ public class FileLogic implements Serializable {
             // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
             String dir = sourceDir.getParent().toString();
             cleanAndDisplay(new File(dir));
-            notification.createSuccess("Se elimin� el archivo correctamente: " + file.getName());
+            notification.createSuccess("Se eliminó el archivo correctamente: " + file.getName());
         } catch (IOException ex) {
             notification.createFailure("No se elimino el archivo");
         }
@@ -105,9 +105,9 @@ public class FileLogic implements Serializable {
             // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
             String dir = sourceDir.getParent().toString();
             cleanAndDisplay(new File(dir));
-            notification.createSuccess("Se renombr� el archivo correctamente: " + oldFile.getName());
+            notification.createSuccess("Se renombró el archivo correctamente: " + oldFile.getName());
         } catch (Exception ex) {
-            notification.createFailure("No se renombr� el archivo");
+            notification.createFailure("No se renombró el archivo");
         }
     }
 

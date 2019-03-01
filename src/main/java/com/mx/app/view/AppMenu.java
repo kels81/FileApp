@@ -77,9 +77,8 @@ public final class AppMenu extends CustomComponent {
     }
 
     private User getCurrentUser() {
-//        return new User("Jose Antonio", "López");
-        return (User) VaadinSession.getCurrent()
-                .getAttribute(User.class.getName());
+        return new User("Jose Antonio", "López");
+//        return (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
     }
 
     private Component buildUserMenu() {

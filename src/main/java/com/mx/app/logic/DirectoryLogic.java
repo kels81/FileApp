@@ -125,9 +125,9 @@ public class DirectoryLogic {
             // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
             String dir = sourceDir.getParent().toString();
             cleanAndDisplay(new File(dir));
-            notification.createSuccess("Se renombr� el archivo correctamente: " + oldDirectory.getName());
+            notification.createSuccess("Se renombró el archivo correctamente: " + oldDirectory.getName());
         } catch (Exception ex) {
-            notification.createFailure("No se renombr� el archivo");
+            notification.createFailure("No se renombró el archivo");
         }
     }
 
@@ -230,7 +230,7 @@ public class DirectoryLogic {
         // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
         String dir = sourceDir.toString();
         cleanAndDisplay(new File(dir));
-        notification.createSuccess("Se carg� con �xito");
+        notification.createSuccess("Se cargó con éxito");
     }
 
     public void cleanAndDisplay(File file) {

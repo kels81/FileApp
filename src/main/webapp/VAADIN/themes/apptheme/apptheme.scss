@@ -33,6 +33,7 @@
 @import "common.scss";
 @import "views/login.scss";
 @import "views/transactions.scss";
+@import "views/content.scss";
 
 // Optimize the CSS output
 $v-included-components: remove($v-included-components, accordion);
@@ -58,4 +59,5 @@ $valo-menu-background-image: url('bg.png');
     @include app-common;
     @include app-login-view;
     @include app-transactions-view;
+    @include app-content-view;
 }

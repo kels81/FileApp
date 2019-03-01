@@ -54,24 +54,24 @@ public class AppUI extends UI {
         });
     }
     
-    private void updateContent() {
-        User user = (User) VaadinSession.getCurrent()
-                .getAttribute(User.class.getName());
-        if (user != null) {
-            // Authenticated user
-            setContent(new MainView());
-            removeStyleName("loginview");
-            getNavigator().navigateTo(getNavigator().getState());
-        } else {
-            setContent(new LoginView());
-            addStyleName("loginview");
-        }
-    }
-
 //    private void updateContent() {
-//        setContent(new MainView());
-//        removeStyleName("loginview");
+//        User user = (User) VaadinSession.getCurrent()
+//                .getAttribute(User.class.getName());
+//        if (user != null) {
+//            // Authenticated user
+//            setContent(new MainView());
+//            removeStyleName("loginview");
+//            getNavigator().navigateTo(getNavigator().getState());
+//        } else {
+//            setContent(new LoginView());
+//            addStyleName("loginview");
+//        }
 //    }
+
+    private void updateContent() {
+        setContent(new MainView());
+//        removeStyleName("loginview");
+    }
     
     @Subscribe
     public void userLoginRequested(final UserLoginRequestedEvent event) {
