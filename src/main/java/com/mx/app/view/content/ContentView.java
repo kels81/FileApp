@@ -1,6 +1,7 @@
 package com.mx.app.view.content;
 
 import com.mx.app.component.view.FileGridLayout;
+import com.mx.app.component.view.FileListLayout;
 import com.mx.app.logic.DirectoryLogic;
 import com.mx.app.logic.FileLogic;
 import com.mx.app.utils.Components;
@@ -171,8 +172,8 @@ public final class ContentView extends VerticalLayout implements View {
         Component viewSelected = null;
         if (selected) {
             viewSelected = new FileGridLayout(viewLogicFile, viewLogicDirectory, pathDirectory);
-//        } else {
-//            viewSelected = new FileListLayout(viewLogicFile, viewLogicDirectory, pathDirectory);
+        } else {
+            viewSelected = new FileListLayout(viewLogicFile, viewLogicDirectory, pathDirectory);
         }
 
         return viewSelected;
