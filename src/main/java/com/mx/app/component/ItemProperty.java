@@ -46,42 +46,13 @@ public class ItemProperty {
         return icon;
     }
 
-    public ThemeResource getIconExtension() {
-        String extension = FilenameUtils.getExtension(file.getPath()).toLowerCase();
-        if (file.isDirectory()) {
-            iconResource = new ThemeResource("img/file_manager/folder_" + (file.list().length == 0 ? "empty" : "full") + ".png");
-        } else {
-            //documento
-            //iconResource = new ThemeResource("img/file_manager/" + extension + ".png");
-            iconResource = findExtension(extension);
-        }
-        return iconResource;
-    }
-
-    public ThemeResource findExtension(String extension) {
-        String formato = "desconocido";
-
-        List<String[]> allFileFormats = new ArrayList<>();
-        for (FileFormats fileFormats : FileFormats.values()) {
-            allFileFormats.add(fileFormats.getArrayFileFormats());
-        }
-
-        for (String[] array : allFileFormats) {
-            if (ArrayUtils.contains(array, extension)) {
-                formato = FileFormats.values()[allFileFormats.indexOf(array)].toString().toLowerCase();
-                break;
-            }
-        }
-        return new ThemeResource("img/file_manager/" + formato + ".png");
-    }
-
-    public Label getFileName() {
-        Label lblName = new Label(file.getName());
-        lblName.setSizeFull();
-        lblName.addStyleName("labelName");
-        lblName.addStyleName("noselect");
-        return lblName;
-    }
+//    public Label getFileName() {
+//        Label lblName = new Label(file.getName());
+//        lblName.setSizeFull();
+//        lblName.addStyleName("labelName");
+////        lblName.addStyleName("noselect");
+//        return lblName;
+//    }
 
     public String getNumberOfElementsAndFileSize() {
         long fileSize = file.length();
@@ -105,6 +76,35 @@ public class ItemProperty {
         } catch (IOException ex) {
         }
         return fechaCreacion;
+    }
+    
+    private ThemeResource getIconExtension() {
+        String extension = FilenameUtils.getExtension(file.getPath()).toLowerCase();
+        if (file.isDirectory()) {
+            iconResource = new ThemeResource("img/file_manager/folder_" + (file.list().length == 0 ? "empty" : "full") + ".png");
+        } else {
+            //documento
+            //iconResource = new ThemeResource("img/file_manager/" + extension + ".png");
+            iconResource = findExtension(extension);
+        }
+        return iconResource;
+    }
+
+    private ThemeResource findExtension(String extension) {
+        String formato = "desconocido";
+
+        List<String[]> allFileFormats = new ArrayList<>();
+        for (FileFormats fileFormats : FileFormats.values()) {
+            allFileFormats.add(fileFormats.getArrayFileFormats());
+        }
+
+        for (String[] array : allFileFormats) {
+            if (ArrayUtils.contains(array, extension)) {
+                formato = FileFormats.values()[allFileFormats.indexOf(array)].toString().toLowerCase();
+                break;
+            }
+        }
+        return new ThemeResource("img/file_manager/" + formato + ".png");
     }
 
 }

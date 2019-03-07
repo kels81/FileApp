@@ -131,7 +131,7 @@ public class FileGridLayout extends CssLayout {
     }
 
     private VerticalLayout buildFileDetails() {
-        Component fileName = itemProperty.getFileName();
+        Component fileName = getFileName();
         Component numberOfElements = createLabelNumberOfElementsAndFileSize();
 
         fileDetails = new VerticalLayout();
@@ -141,6 +141,14 @@ public class FileGridLayout extends CssLayout {
         fileDetails.setComponentAlignment(fileName, Alignment.BOTTOM_LEFT);
         fileDetails.setComponentAlignment(numberOfElements, Alignment.BOTTOM_LEFT);
         return fileDetails;
+    }
+    
+    public Label getFileName() {
+        Label lblName = new Label(file.getName());
+        lblName.setSizeFull();
+        lblName.addStyleName("labelName");
+        lblName.addStyleName("noselect");
+        return lblName;
     }
 
     private Label createLabelNumberOfElementsAndFileSize() {

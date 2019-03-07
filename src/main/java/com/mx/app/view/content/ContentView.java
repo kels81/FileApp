@@ -44,6 +44,7 @@ public final class ContentView extends VerticalLayout implements View {
     private final FileLogic viewLogicFile = new FileLogic(this);
 
     private Boolean selected = true;
+    private Boolean isVisible = true;
 
     public ContentView() {
         this.origenPath = new File(Constantes.ROOT_PATH);
@@ -72,7 +73,7 @@ public final class ContentView extends VerticalLayout implements View {
 
         Component path = buildPath(directory);
         Component typesViews = buildViewsBar(directory);
-        
+
         toolBar.addComponents(path, typesViews);
         toolBar.setExpandRatio(typesViews, 1.0f);
 
@@ -119,29 +120,31 @@ public final class ContentView extends VerticalLayout implements View {
 
     private Component buildViewsButtons(File directory) {
         viewButtons = new HorizontalLayout();
-        //viewButtons.setSpacing(true);
 
         btnListView = component.createButtonIconTiny();
-        //btnListView.setIcon(FontAwesome.TH_LIST);
         btnListView.setIcon(FontAwesome.BARS);
-        btnListView.addStyleName(setStyle(selected));
-        btnListView.setEnabled(selected);
+        //btnListView.addStyleName(setStyle(selected));
+        //btnListView.setEnabled(selected);
         btnListView.setDescription("Vista Lista");
+        btnListView.setVisible(isVisible);
         btnListView.addClickListener((Button.ClickEvent event) -> {
             selected = false;
+            isVisible = false;
             cleanAndDisplay(directory);
         });
 
         btnGridView = component.createButtonIconTiny();
         btnGridView.setIcon(FontAwesome.TH_LARGE);
-        btnGridView.addStyleName(setStyle(!selected));
-        btnGridView.setEnabled(!selected);
+        //btnGridView.addStyleName(setStyle(!selected));
+        //btnGridView.setEnabled(!selected);
         btnGridView.setDescription("Vista Grid");
+        btnGridView.setVisible(!isVisible);
         btnGridView.addClickListener((Button.ClickEvent event) -> {
             selected = true;
+            isVisible = true;
             cleanAndDisplay(directory);
         });
-        
+
         viewButtons.addComponents(btnListView, btnGridView);
 
         return viewButtons;
