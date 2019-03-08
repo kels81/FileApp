@@ -9,6 +9,8 @@ import com.mx.app.logic.DirectoryLogic;
 import com.mx.app.logic.FileLogic;
 import com.mx.app.utils.Components;
 import com.mx.app.utils.Constantes;
+import com.vaadin.data.TreeData;
+import com.vaadin.data.provider.TreeDataProvider;
 //import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.ThemeResource;
@@ -18,12 +20,17 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
+import java.io.FileFilter;
+import java.util.Arrays;
+import java.util.List;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
 
 /**
  *
@@ -34,10 +41,8 @@ public class DirectoryTreeFolderWindow extends Window {
     private final File origenPath;
     private final VerticalLayout content;
     private VerticalLayout body;
-    private VerticalLayout root;
     private HorizontalLayout footer;
-    private Tree tree;
-    private File rootDir;
+    private Tree<File> tree;
     private final TabSheet detailsWrapper;
 //    private HierarchicalContainer container;
     private Label lblFileName;
@@ -47,6 +52,7 @@ public class DirectoryTreeFolderWindow extends Window {
     private Button btnCopiar;
 
     private final Components component = new Components();
+    private final TreeData<File> treeData = new TreeData<>();
     private final FileLogic viewLogicFile;
     private final DirectoryLogic viewLogicDirectory;
 
@@ -70,32 +76,32 @@ public class DirectoryTreeFolderWindow extends Window {
         content = new VerticalLayout();
         content.setSizeFull();
         content.setMargin(new MarginInfo(true, false, false, false));
+        //content.setSpacing(false);
 
         detailsWrapper = new TabSheet();
         detailsWrapper.setSizeFull();
         detailsWrapper.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
         detailsWrapper.addComponent(body());
 
-        content.addComponent(detailsWrapper);
-        content.setExpandRatio(detailsWrapper, 1.0f);
+        content.addComponentsAndExpand(detailsWrapper);
         content.addComponent(buildFooter());
 
         setContent(content);
+
+        //Page.getCurrent().getStyles().add(".v-verticallayout {border: 1px solid blue;} .v-verticallayout .v-slot {border: 1px solid red;}");
     }
 
     private VerticalLayout body() {
         body = new VerticalLayout();
         //body.setCaption("Mover o Copiar" + "  \""+fileTo.getName()+"\"");
         body.setCaption("Mover o Copiar");
-        body.setMargin(true);
+        body.setMargin(new MarginInfo(true, true, false, true));
         body.setSpacing(true);
         body.addComponent(buildFileName());
         body.addComponent(new Label("Selecciona folder destino:"));
-//        Component tree = buildTree();
-//        body.addComponent(tree);
-//        body.setExpandRatio(tree, 1.0f);
+        Component tree = buildTree();
+        body.addComponentsAndExpand(tree);
 
-        //Page.getCurrent().getStyles().add(".v-verticallayout {border: 1px solid blue;} .v-verticallayout .v-slot {border: 1px solid red;}");
         return body;
     }
 
@@ -106,16 +112,12 @@ public class DirectoryTreeFolderWindow extends Window {
         return lblFileName;
     }
 
-//    private Component buildTree() {
-//        root = new VerticalLayout();
-//
-//        Container generateContainer = getDirectoryContainer(origenPath);
-//        tree = new Tree();
-//        tree.setContainerDataSource(generateContainer);
-//        tree.setItemCaptionPropertyId("caption");
-//        tree.setItemIconPropertyId("icon");
-//        tree.setImmediate(true);
-//        tree.setSelectable(false);
+    private Component buildTree() {
+        tree = new Tree<>();
+        tree.setDataProvider(crearContenedor(origenPath));
+        tree.setItemCaptionGenerator(File::getName);
+        tree.setItemIconGenerator(File -> new ThemeResource("img/file_manager/folder_24.png"));
+        tree.setRowHeight(35);
 //        tree.addExpandListener(new Tree.ExpandListener() {
 //            @Override
 //            public void nodeExpand(Tree.ExpandEvent event) {
@@ -138,26 +140,27 @@ public class DirectoryTreeFolderWindow extends Window {
 //                }
 //            }
 //        });
-//        tree.addItemClickListener(new ItemClickEvent.ItemClickListener() {
-//            @Override
-//            public void itemClick(ItemClickEvent event) {
-//                //Notification.show("6666_" + event.getItem().getItemProperty("caption").getValue());
-//                Object itemId = event.getItemId();
-//                tree.select(itemId);
-//                btnCopiar.setEnabled(true);
-//                btnMover.setEnabled(true);
-//                //VALIDACION PARA EXPANDIR NODE DESDE EL LABEL
-//                if (event.isDoubleClick()) {
-//                    if (tree.isExpanded(itemId)) {
-//                        tree.collapseItem(itemId);
-//                    } else {
-//                        tree.expandItem(itemId);
-//                    }
-//                }
-//            }
-//        });
-//
-//        // Expand all items that can be
+        tree.addCollapseListener((event) -> {
+            tree.collapseRecursively(getListSubDirectory(event.getCollapsedItem().getParentFile()), 0);
+        });
+
+        tree.addItemClickListener((event) -> {
+            File itemId = event.getItem();
+            tree.select(itemId);
+            btnCopiar.setEnabled(true);
+            btnMover.setEnabled(true);
+            //VALIDACION PARA EXPANDIR NODE DESDE EL CAPTION
+            if (event.getMouseEventDetails().isDoubleClick()) {
+                if (tree.isExpanded(itemId)) {
+                    //tree.collapseRecursively(getListSubDirectory(itemId.getParentFile()), 0);
+                    tree.collapse(itemId);
+                } else {
+                    tree.expand(itemId);
+                }
+            }
+        });
+
+        // Expand all items that can be
 //        for (Object itemId : container.getItemIds()) {
 //            //ESTA VALIDACION ES PARA CUANDO SE QUIERE MOSTRAR CARPETA ROOT Y CARPETAS 
 //            //DENTRO DE ELLA 1ER NIVEL
@@ -165,11 +168,9 @@ public class DirectoryTreeFolderWindow extends Window {
 //                tree.expandItem(itemId);
 //            }
 //        }
-//
 //        root.addComponent(tree);
-//
-//        return root;
-//    }
+        return tree;
+    }
 
     private Component buildFooter() {
         footer = new HorizontalLayout();
@@ -229,57 +230,25 @@ public class DirectoryTreeFolderWindow extends Window {
         return footer;
     }
 
-//    public HierarchicalContainer getDirectoryContainer(File directory) {
-//
-//        // Create new container
-//        container = new HierarchicalContainer();
-//        // Create containerproperty for name
-//        container.addContainerProperty("icon", ThemeResource.class, null);
-//        container.addContainerProperty("caption", String.class, null);
-//        container.addContainerProperty("path", String.class, null);
-//        container.addContainerProperty("type", String.class, null);
-//
-////        createTreeContent(directory, null);
-//
-//        return container;
-//    }
+    private TreeDataProvider<File> crearContenedor(File directory) {
+        treeData.addItem(null, directory);
+        // add children for the root level items
+        createTreeContent(directory);
+        //files.forEach(dir -> treeData.addItems(dir, getChildren(dir)));
+        return new TreeDataProvider<>(treeData);
+    }
 
-//    private void createTreeContent(File directory, Tree.ExpandEvent event) {
-//
-//        if (event == null) {
-//            rootDir = directory;
-//            // Create an item
-//            Item item = container.addItem(rootDir);
-//            item.getItemProperty("caption").setValue(rootDir.getName());
-//            item.getItemProperty("icon").setValue(new ThemeResource("img/file_manager/folder_24.png"));
-//            item.getItemProperty("path").setValue(rootDir.getAbsolutePath());
-//            item.getItemProperty("type").setValue("folder");
-//        }
-//
-//        File[] arrayFiles = directory.listFiles((FileFilter) DirectoryFileFilter.DIRECTORY);     //PARA OBTENER UNICAMENTE DIRECTORIOS DE UN DIRECTORIO
-//        Arrays.sort(arrayFiles);
-//        //CONVERTIR ARRAY A LIST
-//        List<File> files = Arrays.asList(arrayFiles);
-//
-//        if (!files.isEmpty()) {
-//            for (File file : files) {
-//                //PARA SABER SI EL DIRECTORIO TIENE ADENTRO OTROS DIRECTORIOS Y PODER MOSTRAR LA FLECHA DE EXPANDIR
-//                Boolean allow = Boolean.FALSE;
-//                if (file.isDirectory() && file.list().length != 0) {
-//                    File[] subDirectory = file.listFiles((FileFilter) DirectoryFileFilter.DIRECTORY);
-//                    allow = subDirectory.length != 0;
-//                }
-//
-//                container.addItem(file);
-//                container.getItem(file).getItemProperty("caption").setValue(file.getName());
-//                container.getItem(file).getItemProperty("icon").setValue(new ThemeResource("img/file_manager/folder_24.png"));
-//                container.getItem(file).getItemProperty("path").setValue(file.getAbsolutePath());
-//                container.getItem(file).getItemProperty("type").setValue("folder");
-//                container.setChildrenAllowed(file, allow);  // SI SE ENCUENTRA VACIA LA CARPETA, NO MOSTRARA LA FLECHA DE EXPANDIR
-//
-//                container.setParent(file, event != null ? event.getItemId() : rootDir);
-//            }
-//        }
-//    }
+    private List<File> getListSubDirectory(File directory) {
+        File[] arrayFiles = directory.listFiles((FileFilter) DirectoryFileFilter.DIRECTORY);     //PARA OBTENER UNICAMENTE DIRECTORIOS DE UN DIRECTORIO
+        Arrays.sort(arrayFiles);
+        return Arrays.asList(arrayFiles);
+    }
+
+    private void createTreeContent(File directory) {
+        for (File file : getListSubDirectory(directory)) {
+            treeData.addItem(directory, file);
+            createTreeContent(file);
+        }
+    }
 
 }
