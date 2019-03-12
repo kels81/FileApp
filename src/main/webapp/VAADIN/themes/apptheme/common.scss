@@ -209,7 +209,7 @@
             //padding-right: $v-layout-margin-right;
         }
     }
-    
+
     .createfolder-window {
         max-height: round(10 * $v-font-size);
         width: round(18 * $v-font-size);
@@ -280,5 +280,37 @@
 
     .InvisibleButton {
         display: none;
+    }
+
+    .treeApp {
+        .v-tree8-row-selected::before {
+            display: block;
+            background-color: #197de1;
+            background-image: linear-gradient(to bottom, #1b87e3 2%, #166ed5 98%);
+        }
+        .v-tree8-row-focused::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            display: none;
+            pointer-events: none;
+            background-color: #197de1;
+            background-image: linear-gradient(to bottom, #1b87e3 2%, #166ed5 98%);
+        }
+        .v-tree8:focus .v-tree8-row-selected.v-tree8-row-focused::before {
+            border-color: #197de1;
+            box-shadow: none;
+        }
+        .v-tree8-row-focused > .v-tree8-cell {
+            text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
+            color: #c8dbed;
+        }
+        .v-tree8-row-selected > .v-tree8-cell {
+            color: #c8dbed;
+            text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
+        }
     }
 }

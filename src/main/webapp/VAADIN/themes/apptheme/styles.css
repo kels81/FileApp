@@ -1077,7 +1077,7 @@
  */
 
 .v-vaadin-version:after {
-	content: "8.7.0";
+	content: "8.7.1";
 }
 
 .v-widget {
@@ -8819,6 +8819,155 @@ div.v-layout.v-horizontal.v-widget {
 	margin: 0 -12px -12px;
 }
 
+.apptheme .v-tree {
+	position: relative;
+	white-space: nowrap;
+}
+
+.apptheme .v-tree:focus {
+	outline: none;
+}
+
+.apptheme .v-tree-node:before {
+	content: "";
+	position: absolute;
+	display: inline-block;
+	z-index: 3;
+	width: 1.9em;
+	height: 28px;
+	cursor: pointer;
+	background: red;
+	opacity: 0;
+}
+
+.apptheme .v-tree-node-caption {
+	height: 28px;
+	line-height: 27px;
+	overflow: hidden;
+	white-space: nowrap;
+	vertical-align: top;
+}
+
+.apptheme .v-tree-node-caption > div {
+	display: inline-block;
+	width: 100%;
+	position: relative;
+	z-index: 2;
+}
+
+.apptheme .v-tree-node-caption > div:before {
+	content: "\f0da";
+	font-family: ThemeIcons;
+	display: inline-block;
+	width: 0.5em;
+	text-align: center;
+	margin: 0 0.6em 0 0.8em;
+	-webkit-transition: all 100ms;
+	-moz-transition: all 100ms;
+	transition: all 100ms;
+}
+
+.apptheme .v-tree-node-caption span {
+	padding-right: 28px;
+	cursor: pointer;
+	display: inline-block;
+	width: 100%;
+}
+
+.v-ie .apptheme .v-tree-node-caption span {
+	width: auto;
+}
+
+.apptheme .v-tree-node-caption .v-icon {
+	padding-right: 0;
+	width: auto;
+	min-width: 1em;
+}
+
+.apptheme .v-tree-node-caption:after {
+	content: "";
+	display: block;
+	vertical-align: top;
+	position: absolute;
+	z-index: 1;
+	left: 0;
+	margin-top: -28px;
+	width: 100%;
+	height: 28px;
+	border-radius: 4px;
+	opacity: 0;
+	-webkit-transition: opacity 120ms;
+	-moz-transition: opacity 120ms;
+	transition: opacity 120ms;
+}
+
+.apptheme .v-tree-node-expanded > .v-tree-node-caption > div:before {
+	-webkit-transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+	-ms-transform: rotate(90deg);
+	-o-transform: rotate(90deg);
+	transform: rotate(90deg);
+	content: "\f0da";
+	font-family: ThemeIcons;
+}
+
+.apptheme .v-tree-node-leaf:before, .apptheme .v-tree-node-leaf > .v-tree-node-caption > div:before {
+	visibility: hidden;
+}
+
+.apptheme .v-tree-node-focused:after {
+	opacity: 1;
+	border: 1px solid #197de1;
+}
+
+.apptheme .v-tree-node-selected {
+	color: #ecf2f8;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+.apptheme .v-tree-node-selected:after {
+	opacity: 1;
+	background-color: #197de1;
+	background-image: -webkit-linear-gradient(top, #1b87e3 2%, #166ed5 98%);
+	background-image: linear-gradient(to bottom,#1b87e3 2%, #166ed5 98%);
+	border: none;
+}
+
+.apptheme .v-tree-node-children {
+	padding-left: 19px;
+}
+
+.apptheme .v-tree-node-drag-top:before, .apptheme .v-tree-node-drag-bottom:after, .apptheme .v-tree-node-drag-bottom.v-tree-node-dragfolder.v-tree-node-expanded > .v-tree-node-children:before {
+	content: "\2022";
+	display: block;
+	position: absolute;
+	height: 2px;
+	width: 100%;
+	background: #197de1;
+	font-size: 32px;
+	line-height: 2px;
+	color: #197de1;
+	text-indent: -4px;
+	text-shadow: 0 0 1px #fafafa, 0 0 1px #fafafa;
+	opacity: 1;
+	visibility: visible;
+}
+
+.apptheme .v-tree-node-drag-bottom.v-tree-node-dragfolder.v-tree-node-expanded:after {
+	content: none;
+}
+
+.apptheme .v-tree-node-caption-drag-center {
+	-webkit-box-shadow: 0 0 0 2px #197de1;
+	box-shadow: 0 0 0 2px #197de1;
+	position: relative;
+	border-radius: 4px;
+}
+
+.v-ff .apptheme .v-tree-node-drag-top:before, .v-ff .apptheme .v-tree-node-drag-bottom:after {
+	line-height: 1px;
+}
+
 .apptheme .v-tree8 {
 	position: relative;
 }
@@ -13713,11 +13862,6 @@ div.v-layout.v-horizontal.v-widget {
 	background-color: inherit;
 }
 
-.apptheme .directorywindow .v-tabsheet-content > div > .v-scrollable > .v-layout {
-	padding-left: 37px;
-	padding-right: 37px;
-}
-
 .apptheme .createfolder-window {
 	max-height: 160px;
 	width: 288px;
@@ -13793,6 +13937,40 @@ div.v-layout.v-horizontal.v-widget {
 
 .apptheme .InvisibleButton {
 	display: none;
+}
+
+.apptheme .treeApp .v-tree8-row-selected::before {
+	display: block;
+	background-color: #197de1;
+	background-image: linear, to bottom, #1b87e3 2%, #166ed5 98%;
+}
+
+.apptheme .treeApp .v-tree8-row-focused::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	display: none;
+	pointer-events: none;
+	background-color: #197de1;
+	background-image: linear, to bottom, #1b87e3 2%, #166ed5 98%;
+}
+
+.apptheme .treeApp .v-tree8:focus .v-tree8-row-selected.v-tree8-row-focused::before {
+	border-color: #197de1;
+	box-shadow: none;
+}
+
+.apptheme .treeApp .v-tree8-row-focused > .v-tree8-cell {
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
+	color: #c8dbed;
+}
+
+.apptheme .treeApp .v-tree8-row-selected > .v-tree8-cell {
+	color: #c8dbed;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
 }
 
 .apptheme .loginview {

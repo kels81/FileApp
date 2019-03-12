@@ -172,7 +172,7 @@ public final class ContentView extends VerticalLayout implements View {
     }
 
     private Component selectView(Boolean selected, File pathDirectory) {
-        Component viewSelected = null;
+        Component viewSelected;
         if (selected) {
             viewSelected = new FileGridLayout(viewLogicFile, viewLogicDirectory, pathDirectory);
         } else {
