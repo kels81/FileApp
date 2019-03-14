@@ -282,35 +282,26 @@
         display: none;
     }
 
-    .treeApp {
-        .v-tree8-row-selected::before {
-            display: block;
+        .treeApp {
+            .v-tree8-row-focused::before {
+                border: none;
+            }
+        }
+
+    .rowSelected  .v-tree8-row-focused {
+        >  .v-tree8-cell {
             background-color: #197de1;
+            background-image: -webkit-linear-gradient(top, #1b87e3 2%, #166ed5 98%);
             background-image: linear-gradient(to bottom, #1b87e3 2%, #166ed5 98%);
-        }
-        .v-tree8-row-focused::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            display: none;
-            pointer-events: none;
-            background-color: #197de1;
-            background-image: linear-gradient(to bottom, #1b87e3 2%, #166ed5 98%);
-        }
-        .v-tree8:focus .v-tree8-row-selected.v-tree8-row-focused::before {
-            border-color: #197de1;
-            box-shadow: none;
-        }
-        .v-tree8-row-focused > .v-tree8-cell {
-            text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
-            color: #c8dbed;
-        }
-        .v-tree8-row-selected > .v-tree8-cell {
             color: #c8dbed;
             text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
+            border-color: #1d69b4;
+            border-radius: 4px;
+            user-select: none;
+            -o-user-select:none;
+            -moz-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
         }
     }
 }

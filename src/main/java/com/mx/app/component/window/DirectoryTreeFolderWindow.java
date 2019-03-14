@@ -11,20 +11,21 @@ import com.mx.app.utils.Components;
 import com.mx.app.utils.Constantes;
 import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
-import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Responsive;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.Tree;
-import com.vaadin.ui.Tree.TreeContextClickEvent;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.ThemeResource;
 import java.io.File;
 import java.io.FileFilter;
 import java.nio.file.Path;
@@ -49,6 +50,7 @@ public class DirectoryTreeFolderWindow extends Window {
     private final TabSheet detailsWrapper;
     private Label lblFileName;
     private final File fileTo;
+    private File targetDir;
     private Button btnCancelar;
     private Button btnMover;
     private Button btnCopiar;
@@ -119,38 +121,36 @@ public class DirectoryTreeFolderWindow extends Window {
 
     private Component buildTree() {
         tree = new Tree<>();
-        tree.setStyleName("treeApp");
+        tree.setStyleName("treeApp");       // SE CREA ESTE ESTILO PARA QUE NO MUESTRE EL BORDER DE FOCUS CUANDO SE SELECCIONA EL ITEM
+        tree.setSelectionMode(Grid.SelectionMode.NONE);
         tree.setDataProvider(crearContenedor(origenPath));
         tree.setItemCaptionGenerator(File::getName);
-//        tree.setItemIconGenerator(File -> new ThemeResource("img/file_manager/folder_24.png"));
-        tree.setItemIconGenerator(File -> VaadinIcons.FOLDER);
+        tree.setItemIconGenerator(File -> new ThemeResource("img/file_manager/folder_24.png"));
+//        tree.setItemIconGenerator(File -> VaadinIcons.FOLDER);
         tree.setRowHeight(35);
         tree.addCollapseListener((event) -> {
             File itemId = event.getCollapsedItem();
-            tree.collapseRecursively(tree.getSelectedItems(), getSizeDepthChildren(itemId));
+            tree.collapseRecursively(getSelectedItems(itemId), getSizeDepthChildren(itemId));
         });
-//        tree.addExpandListener((event) -> {
-//            File itemId = event.getExpandedItem();
-//            tree.select(itemId);
-//        });
         tree.addItemClickListener((event) -> {
-                File itemId = event.getItem();
-//                tree.getSelectionModel().select(itemId);
-                tree.select(itemId);
-                btnCopiar.setEnabled(true);
-                btnMover.setEnabled(true);
-                //VALIDACION PARA EXPANDIR NODE DESDE EL CAPTION
-                if (event.getMouseEventDetails().isDoubleClick()) {
-                    if (tree.isExpanded(itemId)) {
-                        tree.collapse(itemId);
-                    } else {
-                        tree.expand(itemId);
-                    }
+            File itemId = event.getItem();
+            targetDir = itemId;
+            tree.select(itemId);
+            tree.setStyleName("rowSelected");   // SE CREA ESTE ESTILO PARA QUE MUESTRE QUE ESTA SELECCIONADO EL ITEM
+            btnCopiar.setEnabled(true);
+            btnMover.setEnabled(true);
+            //VALIDACION PARA EXPANDIR NODE DESDE EL CAPTION
+            if (event.getMouseEventDetails().isDoubleClick()) {
+                if (tree.isExpanded(itemId)) {
+                    tree.collapse(itemId);
+                } else {
+                    tree.expand(itemId);
                 }
+            }
         });
         // PARA CUANDO SE QUIERE MOSTRAR CARPETA ROOT Y CARPETAS DENTRO DE ELLA 1ER NIVEL
         tree.expand(tree.getTreeData().getRootItems());
-        
+
         return tree;
     }
 
@@ -169,7 +169,8 @@ public class DirectoryTreeFolderWindow extends Window {
         btnMover.setEnabled(false);
         btnMover.addClickListener((Button.ClickEvent event) -> {
             Path source = Paths.get(fileTo.getAbsolutePath());
-            Path target = Paths.get(tree.asSingleSelect().getValue() + "\\" + fileTo.getName());
+            Path target = Paths.get(targetDir + "\\" + fileTo.getName());
+//            Path target = Paths.get(tree.asSingleSelect().getValue() + "\\" + fileTo.getName());
 
             if (fileTo.isDirectory()) {
                 viewLogicDirectory.moveDirectory(source, target, fileTo);
@@ -185,7 +186,8 @@ public class DirectoryTreeFolderWindow extends Window {
         btnCopiar.setEnabled(false);
         btnCopiar.addClickListener((Button.ClickEvent event) -> {
             Path source = Paths.get(fileTo.getAbsolutePath());
-            Path target = Paths.get(tree.asSingleSelect().getValue() + "\\" + fileTo.getName());
+            Path target = Paths.get(targetDir + "\\" + fileTo.getName());
+//            Path target = Paths.get(tree.asSingleSelect().getValue() + "\\" + fileTo.getName());
 
             if (fileTo.isDirectory()) {
                 viewLogicDirectory.copyDirectory(source, target, fileTo);
@@ -217,16 +219,22 @@ public class DirectoryTreeFolderWindow extends Window {
         return Arrays.asList(arrayFiles);
     }
 
-    private void createTreeContent(File directory) {
-        for (File file : getListSubDirectory(directory)) {
-            treeData.addItem(directory, file);
-            createTreeContent(file);
+    private void createTreeContent(File parentDirectory) {
+        for (File childrenDirectory : getListSubDirectory(parentDirectory)) {
+            treeData.addItem(parentDirectory, childrenDirectory);
+            createTreeContent(childrenDirectory);
         }
     }
 
-    private int getSizeDepthChildren(File startItemId) {
+    private List<File> getSelectedItems(File itemId) {
+        List<File> selectedItem = new ArrayList<>();
+        selectedItem.add(itemId);
+        return selectedItem;
+    }
+
+    private int getSizeDepthChildren(File parentItemId) {
         depthLst.clear();
-        getChildrens(startItemId);
+        getChildrens(parentItemId);
         return Collections.max(depthLst);
     }
 
