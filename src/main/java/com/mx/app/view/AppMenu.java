@@ -1,28 +1,16 @@
 package com.mx.app.view;
 
 import com.google.common.eventbus.Subscribe;
-import com.mx.app.domain.User;
+import com.mx.app.data.User;
 import com.vaadin.icons.VaadinIcons;
-import com.mx.app.event.AppEvent.PostViewChangeEvent;
-import com.mx.app.event.AppEvent.UserLoggedOutEvent;
+import com.mx.app.event.AppEvent.*;
 //import com.mx.app.event.AppEvent.ProfileUpdatedEvent;
 import com.mx.app.event.AppEventBus;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.server.VaadinSession;
+import com.vaadin.server.*;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.MenuItem;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
@@ -94,7 +82,7 @@ public final class AppMenu extends CustomComponent {
     private Component buildLogOutButton() {
         Button btnLogout = new Button("Logout");
         btnLogout.setPrimaryStyleName("valo-menu-item");
-        btnLogout.setIcon(VaadinIcons.SIGN_OUT);
+        btnLogout.setIcon(VaadinIcons.POWER_OFF);
         btnLogout.addClickListener((ClickEvent event) -> {
 //            VaadinSession.getCurrent().getSession().invalidate();
 //            Page.getCurrent().reload();           // OTRA OPCION DE HACER LOGOUT

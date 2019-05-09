@@ -5,6 +5,7 @@
  */
 package com.mx.app.logic;
 
+import com.mx.app.data.Item;
 import com.mx.app.utils.Notifications;
 import com.mx.app.utils.ZipUtils;
 import com.mx.app.view.content.ContentView;
@@ -44,11 +45,11 @@ public class DirectoryLogic {
         this.view = view;
     }
 
-    public void downloadDirectory(File directory, Button dwnldInvisibleBtn) {
+    public void downloadDirectory(Item directory, Button dwnldInvisibleBtn) {
         try {
             File tmp = Files.createTempDirectory("zip").toFile();
             Path sourceTemp = Paths.get(tmp.getAbsolutePath());
-            Boolean result = ZipUtils.zipDirectory(sourceTemp, directory);
+            Boolean result = ZipUtils.zipDirectory(sourceTemp, new File(directory.getPath()));
             System.out.println("result = " + result);
 
             FileDownloader fileDownloader;
@@ -76,14 +77,14 @@ public class DirectoryLogic {
         }
     }
 
-    public void moveDirectory(Path sourceDir, Path targetDir, File directory) {
+    public void moveDirectory(Path sourceDir, Path targetDir, Item directory) {
         try {
             //Files.move(sourceDir, targetDir, StandardCopyOption.REPLACE_EXISTING);  //REEMPLAZAR EXISTENTE
             System.out.println("move directory");
             Files.move(sourceDir, targetDir);
             // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
             String dir = sourceDir.getParent().toString();
-            cleanAndDisplay(new File(dir));
+            cleanAndDisplay(new Item(dir));
             notification.createSuccess("Se movio el archivo correctamente: " + directory.getName());
         } catch (FileAlreadyExistsException ex) {
             notification.createFailure("Ya existe un archivo con el mismo nombre en esta carpeta");
@@ -92,39 +93,39 @@ public class DirectoryLogic {
         }
     }
 
-    public void copyDirectory(Path sourceDir, Path targetDir, File directory) {
+    public void copyDirectory(Path sourceDir, Path targetDir, Item directory) {
         System.out.println("copy directory");
         try {
             //FileUtils.copyDirectoryToDirectory(sourceDir.toFile(), targetDir.toFile());
             FileUtils.copyDirectory(sourceDir.toFile(), targetDir.toFile());
             // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
             String dir = sourceDir.getParent().toString();
-            cleanAndDisplay(new File(dir));
+            cleanAndDisplay(new Item(dir));
             notification.createSuccess("Se copio el archivo correctamente: " + directory.getName());
         } catch (IOException ex) {
             notification.createFailure("Problemas al copiar el archivo");
         }
     }
 
-    public void deleteDirectory(Path sourceDir, File directory) {
+    public void deleteDirectory(Path sourceDir, Item directory) {
         System.out.println("delete directory");
         try {
-            FileUtils.deleteDirectory(directory);
+            FileUtils.deleteDirectory(new File(directory.getPath()));
             String dir = sourceDir.getParent().toString();
-            cleanAndDisplay(new File(dir));
+            cleanAndDisplay(new Item(dir));
             notification.createSuccess("Se elimino el archivo correctamente: " + directory.getName());
         } catch (IOException ex) {
             notification.createFailure("No se elimino el archivo");
         }
     }
 
-    public void renameDirectory(Path sourceDir, File oldDirectory, File newDirectory) {
+    public void renameDirectory(Path sourceDir, Item oldDirectory, Item newDirectory) {
         System.out.println("rename directory");
         try {
             oldDirectory.renameTo(newDirectory);
             // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
             String dir = sourceDir.getParent().toString();
-            cleanAndDisplay(new File(dir));
+            cleanAndDisplay(new Item(dir));
             notification.createSuccess("Se renombró el archivo correctamente: " + oldDirectory.getName());
         } catch (Exception ex) {
             notification.createFailure("No se renombró el archivo");
@@ -147,16 +148,17 @@ public class DirectoryLogic {
 //        }
 //
 //    }
-    public void zipDirectory(Path sourceDirectory, File directoryToZip) {
+    public void zipDirectory(Path sourceDirectory, Item directoryToZip) {
         try {
             String zipDirectoryName = directoryToZip.getName() + ".zip";
             ZipOutputStream out = new ZipOutputStream(new FileOutputStream(directoryToZip.getParent() + "\\" + zipDirectoryName));
 
             String directoryName = directoryToZip.getName() + File.separator;
 
-            File[] files = directoryToZip.listFiles();
-            if (files.length != 0) {
-                for (File file : files) {
+            //File[] files = directoryToZip.listFiles();
+            List<Item> files = directoryToZip.getList();
+            if (!files.isEmpty()) {
+                for (Item file : files) {
                     if (file.isFile()) {
                         zipFile(file, directoryName, out);
                     } else if (file.isDirectory()) {
@@ -174,19 +176,20 @@ public class DirectoryLogic {
 
             // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
             String dir = sourceDirectory.getParent().toString();
-            cleanAndDisplay(new File(dir));
+            cleanAndDisplay(new Item(dir));
             notification.createSuccess("Se comprimio el archivo correctamente: " + directoryToZip.getName());
         } catch (IOException e) {
             notification.createFailure("No se comprimio el archivo");
         }
     }
 
-    public void zipFolder(File inputFolder, String parentName, ZipOutputStream zipOutputStream) throws IOException {
+    public void zipFolder(Item inputFolder, String parentName, ZipOutputStream zipOutputStream) throws IOException {
         String directoryName = parentName + inputFolder.getName() + "\\";
 
-        File[] contents = inputFolder.listFiles();
-        if (contents.length != 0) {
-            for (File file : contents) {
+//        File[] contents = inputFolder.listFiles();
+        List<Item> contents = inputFolder.getList();
+        if (!contents.isEmpty()) {
+            for (Item file : contents) {
                 if (file.isFile()) {
                     zipFile(file, directoryName, zipOutputStream);
                 } else if (file.isDirectory()) {
@@ -201,13 +204,13 @@ public class DirectoryLogic {
         zipOutputStream.closeEntry();
     }
 
-    public void zipFile(File inputFile, String parentName, ZipOutputStream zipOutputStream) throws IOException {
+    public void zipFile(Item inputFile, String parentName, ZipOutputStream zipOutputStream) throws IOException {
         // A ZipEntry represents a file entry in the zip archive
         // We name the ZipEntry after the original file's name
         ZipEntry zipEntry = new ZipEntry(parentName + inputFile.getName());
         zipOutputStream.putNextEntry(zipEntry);
 
-        FileInputStream fileInputStream = new FileInputStream(inputFile);
+        FileInputStream fileInputStream = new FileInputStream(new File(inputFile.getPath()));
         byte[] buffer = new byte[1024];
         int bytesRead;
 
@@ -229,11 +232,11 @@ public class DirectoryLogic {
 
         // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
         String dir = sourceDir.toString();
-        cleanAndDisplay(new File(dir));
+        cleanAndDisplay(new Item(dir));
         notification.createSuccess("Se cargó con éxito");
     }
 
-    public void cleanAndDisplay(File file) {
+    public void cleanAndDisplay(Item file) {
         // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
         this.view.cleanAndDisplay(file);
     }

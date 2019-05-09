@@ -3,24 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mx.app.component;
+package com.mx.app.utils;
 
-import com.mx.app.utils.FileFormats;
-import com.vaadin.server.Sizeable;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.themes.ValoTheme;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
+import com.mx.app.data.Item;
+import com.vaadin.server.*;
+import com.vaadin.ui.*;
+import java.io.*;
+import java.nio.file.*;
+import java.nio.file.attribute.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
+import java.util.*;
+import org.apache.commons.io.*;
 import org.apache.commons.lang.ArrayUtils;
 
 /**
@@ -29,11 +22,11 @@ import org.apache.commons.lang.ArrayUtils;
  */
 public class ItemProperty {
 
-    private final File file;
+    private final Item file;
     private ThemeResource iconResource;
     private Image icon;
 
-    public ItemProperty(File file) {
+    public ItemProperty(Item file) {
         this.file = file;
     }
 

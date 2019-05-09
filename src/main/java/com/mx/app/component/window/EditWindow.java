@@ -5,24 +5,15 @@
  */
 package com.mx.app.component.window;
 
-import com.mx.app.logic.DirectoryLogic;
-import com.mx.app.logic.FileLogic;
+import com.mx.app.data.Item;
+import com.mx.app.logic.*;
 import com.mx.app.utils.Components;
 import com.vaadin.event.ShortcutAction;
-import com.vaadin.server.Responsive;
-import com.vaadin.server.Sizeable;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import com.vaadin.server.*;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -45,7 +36,7 @@ public class EditWindow extends Window {
 
     private final TabSheet detailsWrapper;
 
-    public EditWindow(FileLogic editFileLogic, DirectoryLogic editDirectoryLogic,  File file) {
+    public EditWindow(FileLogic editFileLogic, DirectoryLogic editDirectoryLogic,  Item file) {
         this.viewLogicFile = editFileLogic;
         this.viewLogicDirectory = editDirectoryLogic;
 
@@ -72,7 +63,7 @@ public class EditWindow extends Window {
         setContent(content);
     }
 
-    private Component body(File file) {
+    private Component body(Item file) {
         body = new VerticalLayout();
         body.setCaption("Renombrar");
         body.setSizeFull();
@@ -97,7 +88,7 @@ public class EditWindow extends Window {
         return body;
     }
 
-    private Component buildFooter(File file) {
+    private Component buildFooter(Item file) {
         footer = new HorizontalLayout();
         footer.setSpacing(true);
         footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
@@ -114,17 +105,17 @@ public class EditWindow extends Window {
 
         btnGuardar = component.createButtonPrimary("Guardar");
         btnGuardar.addClickListener((Button.ClickEvent event) -> {
-            Path source = Paths.get(file.getAbsolutePath());
+            Path source = Paths.get(file.getPath());
             String newName = txtEditName.getValue().trim();
 
-            File newFile = null;
+            Item newFile = null;
             if (file.isDirectory()) {
-                newFile = new File(source.getParent().toString() + "\\" + newName);
+                newFile = new Item(source.getParent().toString() + "\\" + newName);
                 viewLogicDirectory.renameDirectory(source, file, newFile);
             } else {
                 //DOCUMENTO
                 String extension = file.getName().substring(file.getName().lastIndexOf('.') + 1);
-                newFile = new File(source.getParent().toString() + "\\" + newName + "." + extension);
+                newFile = new Item(source.getParent().toString() + "\\" + newName + "." + extension);
                 viewLogicFile.renameFile(source, file, newFile);
             }
             

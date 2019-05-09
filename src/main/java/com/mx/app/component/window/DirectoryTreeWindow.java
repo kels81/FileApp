@@ -5,69 +5,54 @@
  */
 package com.mx.app.component.window;
 
-import com.mx.app.logic.DirectoryLogic;
-import com.mx.app.logic.FileLogic;
-import com.mx.app.utils.Components;
-import com.mx.app.utils.Constantes;
+import com.mx.app.data.Item;
+import com.mx.app.logic.*;
+import com.mx.app.utils.*;
 import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
+import com.vaadin.event.CollapseEvent;
 import com.vaadin.server.Responsive;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.Tree;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.icons.VaadinIcons;
+import com.vaadin.ui.*;
 import com.vaadin.server.ThemeResource;
-import java.io.File;
-import java.io.FileFilter;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import com.vaadin.ui.Tree.ItemClick;
+import com.vaadin.ui.themes.ValoTheme;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 
 /**
  *
  * @author Edrd
  */
-public class DirectoryTreeFolderWindow extends Window {
+public class DirectoryTreeWindow extends Window {
 
-    private final File origenPath;
+    private final Item origenPath;
     private final VerticalLayout content;
     private VerticalLayout body;
     private HorizontalLayout footer;
-    private Tree<File> tree;
+    private Tree<Item> tree;
     private final TabSheet detailsWrapper;
     private Label lblFileName;
-    private final File fileTo;
-    private File targetDir;
+    private final Item fileTo;
+    private Item targetDir;
     private Button btnCancelar;
     private Button btnMover;
     private Button btnCopiar;
     private int sizeDepth;
 
     private final Components component = new Components();
-    private final TreeData<File> treeData = new TreeData<>();
+    private final TreeData<Item> treeData = new TreeData<>();
     private final List<Integer> depthLst = new ArrayList<>();
 
     private final FileLogic viewLogicFile;
     private final DirectoryLogic viewLogicDirectory;
 
-    public DirectoryTreeFolderWindow(FileLogic moveCopyFileLogic, DirectoryLogic moveCopyDirectoryLogic, File file) {
+    public DirectoryTreeWindow(FileLogic moveCopyFileLogic, DirectoryLogic moveCopyDirectoryLogic, Item file) {
         this.viewLogicFile = moveCopyFileLogic;
         this.viewLogicDirectory = moveCopyDirectoryLogic;
 
-        this.origenPath = new File(Constantes.ROOT_PATH);
+        this.origenPath = new Item(Constantes.ROOT_PATH);
         this.fileTo = file;
 
         Responsive.makeResponsive(this);
@@ -124,16 +109,40 @@ public class DirectoryTreeFolderWindow extends Window {
         tree.setStyleName("treeApp");       // SE CREA ESTE ESTILO PARA QUE NO MUESTRE EL BORDER DE FOCUS CUANDO SE SELECCIONA EL ITEM
         tree.setSelectionMode(Grid.SelectionMode.NONE);
         tree.setDataProvider(crearContenedor(origenPath));
-        tree.setItemCaptionGenerator(File::getName);
-        tree.setItemIconGenerator(File -> new ThemeResource("img/file_manager/folder_24.png"));
+        tree.setItemCaptionGenerator(Item::getName);
+        tree.setItemIconGenerator(Item -> new ThemeResource("img/file_manager/folder_24.png"));
 //        tree.setItemIconGenerator(File -> VaadinIcons.FOLDER);
         tree.setRowHeight(35);
-        tree.addCollapseListener((event) -> {
-            File itemId = event.getCollapsedItem();
-            tree.collapseRecursively(getSelectedItems(itemId), getSizeDepthChildren(itemId));
-        });
-        tree.addItemClickListener((event) -> {
-            File itemId = event.getItem();
+        tree.addCollapseListener((event) -> itemCollapsed(event));
+        tree.addItemClickListener((event) -> itemClicked(event));
+//        tree.addItemClickListener((event) -> {
+//            Item itemId = event.getItem();
+//            targetDir = itemId;
+//            tree.select(itemId);
+//            tree.setStyleName("rowSelected");   // SE CREA ESTE ESTILO PARA QUE MUESTRE QUE ESTA SELECCIONADO EL ITEM
+//            btnCopiar.setEnabled(true);
+//            btnMover.setEnabled(true);
+//            //VALIDACION PARA EXPANDIR NODE DESDE EL CAPTION
+//            if (event.getMouseEventDetails().isDoubleClick()) {
+//                if (tree.isExpanded(itemId)) {
+//                    tree.collapse(itemId);
+//                } else {
+//                    tree.expand(itemId);
+//                }
+//            }});
+        // PARA CUANDO SE QUIERE MOSTRAR CARPETA ROOT Y CARPETAS DENTRO DE ELLA 1ER NIVEL
+        tree.expand(tree.getTreeData().getRootItems());
+
+        return tree;
+    }
+
+    private void itemCollapsed(CollapseEvent<Item> event) {
+        Item itemId = event.getCollapsedItem();
+        tree.collapseRecursively(getSelectedItems(itemId), getSizeDepthChildren(itemId));
+    }
+    
+    private void itemClicked(ItemClick<Item> event) {
+            Item itemId = event.getItem();
             targetDir = itemId;
             tree.select(itemId);
             tree.setStyleName("rowSelected");   // SE CREA ESTE ESTILO PARA QUE MUESTRE QUE ESTA SELECCIONADO EL ITEM
@@ -147,11 +156,6 @@ public class DirectoryTreeFolderWindow extends Window {
                     tree.expand(itemId);
                 }
             }
-        });
-        // PARA CUANDO SE QUIERE MOSTRAR CARPETA ROOT Y CARPETAS DENTRO DE ELLA 1ER NIVEL
-        tree.expand(tree.getTreeData().getRootItems());
-
-        return tree;
     }
 
     private Component buildFooter() {
@@ -168,8 +172,8 @@ public class DirectoryTreeFolderWindow extends Window {
         btnMover = component.createButtonPrimary("Mover");
         btnMover.setEnabled(false);
         btnMover.addClickListener((Button.ClickEvent event) -> {
-            Path source = Paths.get(fileTo.getAbsolutePath());
-            Path target = Paths.get(targetDir + "\\" + fileTo.getName());
+            Path source = Paths.get(fileTo.getPath());
+            Path target = Paths.get(targetDir.getPath().concat("\\").concat(fileTo.getName())); 
 //            Path target = Paths.get(tree.asSingleSelect().getValue() + "\\" + fileTo.getName());
 
             if (fileTo.isDirectory()) {
@@ -185,8 +189,8 @@ public class DirectoryTreeFolderWindow extends Window {
         btnCopiar = component.createButtonPrimary("Copiar");
         btnCopiar.setEnabled(false);
         btnCopiar.addClickListener((Button.ClickEvent event) -> {
-            Path source = Paths.get(fileTo.getAbsolutePath());
-            Path target = Paths.get(targetDir + "\\" + fileTo.getName());
+            Path source = Paths.get(fileTo.getPath());
+            Path target = Paths.get(targetDir.getPath().concat("\\").concat(fileTo.getName()));
 //            Path target = Paths.get(tree.asSingleSelect().getValue() + "\\" + fileTo.getName());
 
             if (fileTo.isDirectory()) {
@@ -205,7 +209,7 @@ public class DirectoryTreeFolderWindow extends Window {
         return footer;
     }
 
-    private TreeDataProvider<File> crearContenedor(File directory) {
+    private TreeDataProvider<Item> crearContenedor(Item directory) {
         treeData.addItem(null, directory);
         // add children for the root level items
         createTreeContent(directory);
@@ -213,34 +217,35 @@ public class DirectoryTreeFolderWindow extends Window {
         return new TreeDataProvider<>(treeData);
     }
 
-    private List<File> getListSubDirectory(File directory) {
-        File[] arrayFiles = directory.listFiles((FileFilter) DirectoryFileFilter.DIRECTORY);     //PARA OBTENER UNICAMENTE DIRECTORIOS DE UN DIRECTORIO
-        Arrays.sort(arrayFiles);
-        return Arrays.asList(arrayFiles);
+    private List<Item> getListSubDirectory(Item directory) {
+//        Item[] arrayFiles = directory.listFiles((FileFilter) DirectoryFileFilter.DIRECTORY);     //PARA OBTENER UNICAMENTE DIRECTORIOS DE UN DIRECTORIO
+//        Arrays.sort(arrayFiles);
+//        return Arrays.asList(arrayFiles);
+        return directory.getListDirectories(directory);
     }
 
-    private void createTreeContent(File parentDirectory) {
-        for (File childrenDirectory : getListSubDirectory(parentDirectory)) {
+    private void createTreeContent(Item parentDirectory) {
+        for (Item childrenDirectory : getListSubDirectory(parentDirectory)) {
             treeData.addItem(parentDirectory, childrenDirectory);
             createTreeContent(childrenDirectory);
         }
     }
 
-    private List<File> getSelectedItems(File itemId) {
-        List<File> selectedItem = new ArrayList<>();
+    private List<Item> getSelectedItems(Item itemId) {
+        List<Item> selectedItem = new ArrayList<>();
         selectedItem.add(itemId);
         return selectedItem;
     }
 
-    private int getSizeDepthChildren(File parentItemId) {
+    private int getSizeDepthChildren(Item parentItemId) {
         depthLst.clear();
         getChildrens(parentItemId);
         return Collections.max(depthLst);
     }
 
-    private void getChildrens(File startItemId) {
+    private void getChildrens(Item startItemId) {
         sizeDepth = 1;
-        for (File id : getListSubDirectory(startItemId)) {
+        for (Item id : getListSubDirectory(startItemId)) {
             getChildrens(id);
             sizeDepth++;
         }

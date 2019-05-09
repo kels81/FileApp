@@ -1,4 +1,4 @@
-package com.mx.app.domain;
+package com.mx.app.data;
 
 import java.io.Serializable;
 

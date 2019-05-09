@@ -1,41 +1,28 @@
 package com.mx.app.view.content;
 
-import com.mx.app.component.view.FileGridLayout;
-import com.mx.app.component.view.FileListLayout;
-import com.mx.app.logic.DirectoryLogic;
-import com.mx.app.logic.FileLogic;
-import com.mx.app.utils.Components;
-import com.mx.app.utils.Constantes;
+import com.mx.app.component.Breadcrumb;
+import com.mx.app.component.view.*;
+import com.mx.app.data.Item;
+import com.mx.app.logic.*;
+import com.mx.app.utils.*;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Responsive;
-import com.vaadin.server.Sizeable;
-import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.server.*;
+import com.vaadin.ui.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @SuppressWarnings("serial")
 public final class ContentView extends VerticalLayout implements View {
 
-    private final File origenPath;
-    private HorizontalLayout rootPath;
-    private HorizontalLayout toolBar;
+    private final Item origenPath;
+//    private HorizontalLayout rootPath;
+    private HorizontalLayout header;
     private HorizontalLayout viewBar;
-    private HorizontalLayout viewButtons;
+//    private HorizontalLayout viewButtons;
 
     private Component directoryContent;
-    private Button btnFolder;
-    private Label lblArrow;
+//    private Button btnPath;
+//    private Label lblArrow;
     private Button btnListView;
     private Button btnGridView;
 
@@ -47,14 +34,14 @@ public final class ContentView extends VerticalLayout implements View {
     private Boolean isVisible = true;
 
     public ContentView() {
-        this.origenPath = new File(Constantes.ROOT_PATH);
+        this.origenPath = new Item(Constantes.ROOT_PATH);
 
         setSizeFull();
         addStyleName("content");
         setMargin(false);
         setSpacing(false);
 
-        addComponent(buildToolbar(origenPath));
+        addComponent(buildHeader(origenPath));
 
         directoryContent = selectView(selected, origenPath);
         addComponent(directoryContent);
@@ -65,61 +52,68 @@ public final class ContentView extends VerticalLayout implements View {
 //        Page.getCurrent().getStyles().add(".v-horizontallayout {border: 1px solid green;} .v-horizontallayout .v-slot {border: 1px solid violet;}");
     }
 
-    private Component buildToolbar(File directory) {
-        toolBar = new HorizontalLayout();
-        toolBar.setWidth(100.0f, Sizeable.Unit.PERCENTAGE);
+    private Component buildHeader(Item directory) {
+        header = new HorizontalLayout();
+        header.setWidth(100.0f, Sizeable.Unit.PERCENTAGE);
 //        toolBar.addStyleName("toolbar");
-        toolBar.addStyleName("viewheader");
+        header.addStyleName("viewheader");
 
-        Component path = buildPath(directory);
-        Component typesViews = buildViewsBar(directory);
+//        Component path = buildPath(directory);
+        Component typesViews = buildViewsButtons(directory);
+        Breadcrumb pathDir = new Breadcrumb(viewLogicDirectory, directory);
+//        ViewsButton typesViews = new ViewsButton(directory);
 
-        toolBar.addComponents(path, typesViews);
-        toolBar.setExpandRatio(typesViews, 1.0f);
+        header.addComponents(pathDir, typesViews);
+        header.setExpandRatio(typesViews, 1.0f);
 
-        return toolBar;
+        return header;
     }
 
-    private Component buildPath(File fileDirectory) {
-        rootPath = new HorizontalLayout();
+//    private Component buildPath(File fileDirectory) {
+//        rootPath = new HorizontalLayout();
+//
+//        List<File> listDirectories = getListDirectories(fileDirectory);
+//        int i = 1;
+//        for (File directory : listDirectories) {
+//            btnPath = component.createButtonPath(directory.getName());
+//            btnPath.setEnabled((i != listDirectories.size())); 
+//            btnPath.addStyleName((i == listDirectories.size() ? "labelColored" : ""));
+//            btnPath.addClickListener(event -> {
+//                //System.out.println("evnt: "+event.getComponent().getCaption());
+//                cleanAndDisplay(directory);
+//            });
+//            rootPath.addComponent(btnPath);
+//            if (i != listDirectories.size()) {
+//                lblArrow = new Label(FontAwesome.ANGLE_RIGHT.getHtml(), ContentMode.HTML);
+//                lblArrow.addStyleName(ValoTheme.LABEL_COLORED);
+//                rootPath.addComponent(lblArrow);
+//                rootPath.setComponentAlignment(lblArrow, Alignment.MIDDLE_CENTER);
+//            }
+//            i++;
+//        }
+//        return rootPath;
+//    }
 
-        List<File> listDirectories = getListDirectories(fileDirectory);
-        int i = 1;
-        for (File directory : listDirectories) {
-            btnFolder = component.createButtonPath(directory.getName());
-            btnFolder.setEnabled((i != listDirectories.size()));
-            btnFolder.addStyleName((i == listDirectories.size() ? "labelColored" : ""));
-            btnFolder.addClickListener(event -> {
-                //System.out.println("evnt: "+event.getComponent().getCaption());
-                cleanAndDisplay(directory);
-            });
-            rootPath.addComponent(btnFolder);
-            if (i != listDirectories.size()) {
-                lblArrow = new Label(FontAwesome.ANGLE_RIGHT.getHtml(), ContentMode.HTML);
-                lblArrow.addStyleName(ValoTheme.LABEL_COLORED);
-                rootPath.addComponent(lblArrow);
-                rootPath.setComponentAlignment(lblArrow, Alignment.MIDDLE_CENTER);
-            }
-            i++;
-        }
-        return rootPath;
-    }
+//    private Component buildViewsBar(File directory) {
+//        viewBar = new HorizontalLayout();
+//        viewBar.setWidth(100.0f, Sizeable.Unit.PERCENTAGE);
+//        viewBar.addStyleName("viewbar");
+//
+////        Component viewsButtons = buildViewsButtons(directory);
+//        ViewsButton viewsButtons = new ViewsButton(directory);
+//
+//        viewBar.addComponent(viewsButtons);
+//        viewBar.setComponentAlignment(viewsButtons, Alignment.MIDDLE_RIGHT);
+//
+//        return viewBar;
+//    }
 
-    private Component buildViewsBar(File directory) {
+    private Component buildViewsButtons(Item directory) {
         viewBar = new HorizontalLayout();
-        viewBar.setWidth(100.0f, Sizeable.Unit.PERCENTAGE);
         viewBar.addStyleName("viewbar");
-
-        Component viewsButtons = buildViewsButtons(directory);
-
-        viewBar.addComponent(viewsButtons);
-        viewBar.setComponentAlignment(viewsButtons, Alignment.MIDDLE_RIGHT);
-
-        return viewBar;
-    }
-
-    private Component buildViewsButtons(File directory) {
-        viewButtons = new HorizontalLayout();
+        viewBar.setWidth(100.0f, Sizeable.Unit.PERCENTAGE);
+        
+        HorizontalLayout viewsButtons = new HorizontalLayout();
 
         btnListView = component.createButtonIconTiny();
         btnListView.setIcon(FontAwesome.BARS);
@@ -145,36 +139,39 @@ public final class ContentView extends VerticalLayout implements View {
             cleanAndDisplay(directory);
         });
 
-        viewButtons.addComponents(btnListView, btnGridView);
+        viewsButtons.addComponents(btnListView, btnGridView);
+        
+        viewBar.addComponent(viewsButtons);
+        viewBar.setComponentAlignment(viewsButtons, Alignment.MIDDLE_RIGHT);
 
-        return viewButtons;
+        return viewBar;
     }
 
-    private List<File> getListDirectories(File directory) {
-        List<File> listDirectories = new ArrayList<>();
-        String[] arrayDirectories = directory.getPath().split(Constantes.SEPARADOR);
-        int idxArchivos = Arrays.asList(arrayDirectories).indexOf(Constantes.ROOT_DIRECTORY);
-        String[] newArrayDirectories = Arrays.copyOfRange(arrayDirectories, idxArchivos, arrayDirectories.length);
-        StringBuilder newPath = new StringBuilder();
-        int i = 1;
-        for (String dirName : newArrayDirectories) {
-//            int fin = directory.getPath().indexOf(dirName);
-//            listDirectories.add(new File(directory.getPath().substring(0, fin + dirName.length())));
-            newPath.append(dirName);
-            if (i != newArrayDirectories.length) {
-                newPath.append("\\");
-            }
-            listDirectories.add(new File(Constantes.PATH_BASE + newPath.toString()));
-            i++;
-        }
-        System.out.println("newPath = " + newPath.toString());
-        return listDirectories;
-    }
+//    private List<File> getListDirectories(File directory) {
+//        List<File> listDirectories = new ArrayList<>();
+//        String[] arrayDirectories = directory.getPath().split(Constantes.SEPARADOR);
+//        int idxArchivos = Arrays.asList(arrayDirectories).indexOf(Constantes.ROOT_DIRECTORY);
+//        String[] newArrayDirectories = Arrays.copyOfRange(arrayDirectories, idxArchivos, arrayDirectories.length);
+//        StringBuilder newPath = new StringBuilder();
+//        int i = 1;
+//        for (String dirName : newArrayDirectories) {
+////            int fin = directory.getPath().indexOf(dirName);
+////            listDirectories.add(new File(directory.getPath().substring(0, fin + dirName.length())));
+//            newPath.append(dirName);
+//            if (i != newArrayDirectories.length) {
+//                newPath.append("\\");
+//            }
+//            listDirectories.add(new File(Constantes.PATH_BASE + newPath.toString()));
+//            i++;
+//        }
+//        System.out.println("newPath = " + newPath.toString());
+//        return listDirectories;
+//    }
 
-    private Component selectView(Boolean selected, File pathDirectory) {
+    private Component selectView(Boolean selected, Item pathDirectory) {
         Component viewSelected;
         if (selected) {
-            viewSelected = new FileGridLayout(viewLogicFile, viewLogicDirectory, pathDirectory);
+            viewSelected = new FileMosaicoLayout(viewLogicFile, viewLogicDirectory, pathDirectory);
         } else {
             viewSelected = new FileListLayout(viewLogicFile, viewLogicDirectory, pathDirectory);
         }
@@ -182,17 +179,17 @@ public final class ContentView extends VerticalLayout implements View {
         return viewSelected;
     }
 
-    public void cleanAndDisplay(File directory) {
+    public void cleanAndDisplay(Item directory) {
         removeAllComponents();
-        addComponent(buildToolbar(directory));
+        addComponent(buildHeader(directory));
         directoryContent = selectView(selected, directory);
         addComponent(directoryContent);
         setExpandRatio(directoryContent, 1);
     }
 
-    private String setStyle(Boolean selected) {
-        return selected ? "borderButton" : "noBorderButton";
-    }
+//    private String setStyle(Boolean selected) {
+//        return selected ? "borderButton" : "noBorderButton";
+//    }
 
     @Override
     public void enter(final ViewChangeEvent event) {

@@ -13874,61 +13874,53 @@ div.v-layout.v-horizontal.v-widget {
 	max-width: 90%;
 }
 
-.apptheme .v-button-borderButton {
-	background: #eee none repeat scroll 0 0;
-	border: 1px solid #b0b0b0;
-	border-radius: 0;
-	color: #181818;
-	cursor: pointer;
-	font-weight: 400;
-	outline: medium none;
-	position: relative;
-	text-align: center;
-	white-space: nowrap;
-}
-
-.apptheme .v-button-noBorderButton {
-	border: 1px solid #f0f0f0;
-	border-radius: 0;
-	color: #181818;
-	cursor: pointer;
-	font-weight: 400;
-	outline: medium none;
-	position: relative;
-	text-align: center;
-	white-space: nowrap;
-}
-
-.apptheme .v-button-labelColored {
+.apptheme .v-button-btnPath {
 	border: none;
+	padding: 0;
 	-webkit-box-shadow: none;
 	box-shadow: none;
 	background: transparent;
-	color: #0072C6;
-	cursor: default !important;
+	color: #197de1;
+}
+
+.apptheme .v-button-btnPath:hover {
+	color: #197de1;
+}
+
+.apptheme .v-button-btnPath:hover:after {
+	background: transparent;
+}
+
+.apptheme .v-button-btnPath:focus:after {
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.apptheme .v-button-btnPath:active {
 	opacity: 1;
+	filter: none ;
+}
+
+.apptheme .v-button-btnPath:active:after {
+	background: transparent;
+}
+
+.apptheme .v-button-labelColored {
+	cursor: default !important;
 }
 
 .apptheme .v-button-labelColored:hover {
-	color: #0072C6;
+	color: #197de1;
 }
 
-.apptheme .v-button-labelColored:hover:after {
-	background: transparent;
-}
-
-.apptheme .v-button-labelColored:active {
-	opacity: 0.7;
-	filter: alpha(opacity = 70);
-}
-
-.apptheme .v-button-labelColored:active:after {
-	background: transparent;
+.apptheme .v-button-labelColored:focus:after {
+	-webkit-box-shadow: none;
+	box-shadow: none;
 }
 
 .apptheme .v-button-labelColored.v-disabled {
 	opacity: 1;
-	filter: alpha(opacity = 50);
+	filter: none ;
 }
 
 .apptheme .v-button-labelColored.v-disabled:after {

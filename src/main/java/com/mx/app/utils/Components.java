@@ -6,12 +6,10 @@
 package com.mx.app.utils;
 
 import com.mx.app.component.ButtonContextMenu;
+import com.mx.app.data.Item;
 import com.mx.app.logic.DirectoryLogic;
 import com.mx.app.logic.FileLogic;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
 import java.util.ArrayList;
@@ -23,20 +21,6 @@ import java.util.List;
  */
 public class Components {
 
-
-    public CheckBox createCheckBox(String caption) {
-        CheckBox cb = new CheckBox(caption);
-//        cb.setImmediate(true);
-        return cb;
-    }
-
-    public TextField createTextField(String caption) {
-        TextField f = new TextField(caption);
-//        f.setNullRepresentation("");
-        //f.addFocusListener(focusListener);
-        //f.addBlurListener(blurListener);
-        return f;
-    }
 
     public Button createButtonPrimary(String caption) {
         Button btn = new Button(caption);
@@ -57,14 +41,14 @@ public class Components {
     public Button createButtonNormal(String caption) {
         Button btn = new Button(caption);
         btn.addStyleName(ValoTheme.BUTTON_SMALL);
-        btn.addStyleName("mybutton");
+        //btn.addStyleName("mybutton");
         //btn.setEnabled(false);
         return btn;
     }
 
     public Button createButtonPath(String caption) {
         Button btn = new Button(caption);
-        btn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+        btn.setStyleName("btnPath");
         //btn.addStyleName(ValoTheme.BUTTON_SMALL);
         //btn.setEnabled(false);
         return btn;
@@ -77,13 +61,14 @@ public class Components {
         return menu;
     }
     
-    public List<File> directoryContents(File directory) {
+//    public List<File> directoryContents(File directory) {
+    public List<Item> directoryContents(Item directory) {
         // ARRAY QUE VA A ACONTENER TODOS LOS ARCHIVOS ORDENADOS POR TIPO Y ALFABETICAMENTE
-        List<File> allDocsLst = new ArrayList<>();
-        File[] files = directory.listFiles();
-        List<File> fileLst = new ArrayList<>();
-        List<File> directoryLst = new ArrayList<>();
-        for (File file : files) {
+        List<Item> allDocsLst = new ArrayList<>();
+//        Item[] files = directory.listFiles();
+        List<Item> fileLst = new ArrayList<>();
+        List<Item> directoryLst = new ArrayList<>();
+        for (Item file : directory.getList()) {
             if (file.isDirectory()) {
                 directoryLst.add(file);
                 //directoryContents(file);   //para conocer los archivos de las subcarpetas
@@ -97,13 +82,13 @@ public class Components {
         return allDocsLst;
     }
     
-    public List<File> directoryFolderContents(File directory) {
+    public List<Item> directoryFolderContents(Item directory) {
         // ARRAY QUE VA A ACONTENER TODOS LOS ARCHIVOS ORDENADOS POR TIPO Y ALFABETICAMENTE
-        List<File> allDocsLst = new ArrayList<>();
-        File[] files = directory.listFiles();
-        List<File> fileLst = new ArrayList<>();
-        List<File> directoryLst = new ArrayList<>();
-        for (File file : files) {
+        List<Item> allDocsLst = new ArrayList<>();
+//        File[] files = directory.listFiles();
+        List<Item> fileLst = new ArrayList<>();
+        List<Item> directoryLst = new ArrayList<>();
+        for (Item file : directory.getList()) {
             if (file.isDirectory()) {
                 directoryLst.add(file);
                 //directoryContents(file);   //para conocer los archivos de las subcarpetas
@@ -117,7 +102,7 @@ public class Components {
         return allDocsLst;
     }
     
-     public ButtonContextMenu createButtonContextMenu(Button downloadInvisibleButton, File file, FileLogic viewLogicFile, DirectoryLogic viewLogicDirectory) {
+     public ButtonContextMenu createButtonContextMenu(Button downloadInvisibleButton, Item file, FileLogic viewLogicFile, DirectoryLogic viewLogicDirectory) {
         return new ButtonContextMenu(downloadInvisibleButton, file, viewLogicFile, viewLogicDirectory);
     }
 

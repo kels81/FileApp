@@ -5,16 +5,14 @@
  */
 package com.mx.app.logic;
 
+import com.mx.app.data.Item;
 import com.mx.app.utils.Notifications;
 import com.mx.app.view.content.ContentView;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.ProgressBar;
-import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -45,7 +43,7 @@ public class FileLogic implements Serializable {
         this.view = view;
     }
     
-    public void downloadFile(File file, Button dwnldInvisibleBtn) {
+    public void downloadFile(Item file, Button dwnldInvisibleBtn) {
         FileDownloader fileDownloader;
             if (!dwnldInvisibleBtn.getExtensions().isEmpty()) {
                 fileDownloader = (FileDownloader) dwnldInvisibleBtn.getExtensions().toArray()[0];
@@ -53,18 +51,18 @@ public class FileLogic implements Serializable {
                     dwnldInvisibleBtn.removeExtension(fileDownloader);
                 }
             }
-            fileDownloader = new FileDownloader(new FileResource(file));
+            fileDownloader = new FileDownloader(new FileResource(new File(file.getPath())));
             fileDownloader.extend(dwnldInvisibleBtn);
             Page.getCurrent().getJavaScript().execute("document.getElementById('DownloadButtonId').click();");
     }
 
-    public void moveFile(Path sourceDir, Path targetDir, File file) {
+    public void moveFile(Path sourceDir, Path targetDir, Item file) {
         try {
             //Files.move(sourceDir, targetDir, StandardCopyOption.REPLACE_EXISTING);  //REEMPLAZAR EXISTENTE
             Files.move(sourceDir, targetDir);
             // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
             String dir = sourceDir.getParent().toString();
-            cleanAndDisplay(new File(dir));
+            cleanAndDisplay(new Item(dir));
             notification.createSuccess("Se movio el archivo correctamente: " + file.getName());
         } catch (FileAlreadyExistsException ex) {
             notification.createFailure("Ya existe un archivo con el mismo nombre en esta carpeta");
@@ -73,12 +71,12 @@ public class FileLogic implements Serializable {
         }
     }
 
-    public void copyFile(Path sourceDir, Path targetDir, File file) {
+    public void copyFile(Path sourceDir, Path targetDir, Item file) {
         try {
             Files.copy(sourceDir, targetDir);
             // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
             String dir = sourceDir.getParent().toString();
-            cleanAndDisplay(new File(dir));
+            cleanAndDisplay(new Item(dir));
             notification.createSuccess("Se copio el archivo correctamente: " + file.getName());
         } catch (FileAlreadyExistsException ex) {
             notification.createFailure("Ya existe un archivo con el mismo nombre en esta carpeta");
@@ -87,31 +85,31 @@ public class FileLogic implements Serializable {
         }
     }
 
-    public void deleteFile(Path sourceDir, File file) {
+    public void deleteFile(Path sourceDir, Item file) {
         try {
             Files.delete(sourceDir);
             // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
             String dir = sourceDir.getParent().toString();
-            cleanAndDisplay(new File(dir));
+            cleanAndDisplay(new Item(dir));
             notification.createSuccess("Se eliminó el archivo correctamente: " + file.getName());
         } catch (IOException ex) {
             notification.createFailure("No se elimino el archivo");
         }
     }
 
-    public void renameFile(Path sourceDir, File oldFile, File newFile) {
+    public void renameFile(Path sourceDir, Item oldFile, Item newFile) {
         try {
             oldFile.renameTo(newFile);
             // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
             String dir = sourceDir.getParent().toString();
-            cleanAndDisplay(new File(dir));
+            cleanAndDisplay(new Item(dir));
             notification.createSuccess("Se renombró el archivo correctamente: " + oldFile.getName());
         } catch (Exception ex) {
             notification.createFailure("No se renombró el archivo");
         }
     }
 
-    public void zipFile(Path sourceFile, File fileToZip) {
+    public void zipFile(Path sourceFile, Item fileToZip) {
         
         try {
             // Create the ZIP file
@@ -120,7 +118,7 @@ public class FileLogic implements Serializable {
             ZipOutputStream out = new ZipOutputStream(new FileOutputStream(fileToZip.getParent() + "\\" + zipFileName));
 
             //for (int i = 0; i < source.length; i++) {
-            FileInputStream in = new FileInputStream(fileToZip);
+            FileInputStream in = new FileInputStream(new File(fileToZip.getPath()));
 
             // Add ZIP entry to output stream.
             out.putNextEntry(new ZipEntry(fileToZip.getName()));
@@ -144,7 +142,7 @@ public class FileLogic implements Serializable {
 
             // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
             String dir = sourceFile.getParent().toString();
-            cleanAndDisplay(new File(dir));
+            cleanAndDisplay(new Item(dir));
             notification.createSuccess("Se comprimio el archivo correctamente: " + fileToZip.getName());
         } catch (IOException ex) {
             notification.createFailure("No se comprimio el archivo");
@@ -240,7 +238,7 @@ public class FileLogic implements Serializable {
 //        return uploader;
 //    }
 
-    public void cleanAndDisplay(File file) {
+    public void cleanAndDisplay(Item file) {
         // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
         this.view.cleanAndDisplay(file);
     }

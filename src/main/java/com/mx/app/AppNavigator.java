@@ -1,16 +1,10 @@
 package com.mx.app;
 
-import com.mx.app.event.AppEvent.BrowserResizeEvent;
-import com.mx.app.event.AppEvent.CloseOpenWindowsEvent;
-import com.mx.app.event.AppEvent.PostViewChangeEvent;
+import com.mx.app.event.AppEvent.*;
 import com.mx.app.event.AppEventBus;
 import com.mx.app.view.AppViewType;
-import com.vaadin.navigator.Navigator;
-import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.navigator.ViewProvider;
-import com.vaadin.ui.ComponentContainer;
-import com.vaadin.ui.UI;
+import com.vaadin.navigator.*;
+import com.vaadin.ui.*;
 
 @SuppressWarnings("serial")
 public class AppNavigator extends Navigator {

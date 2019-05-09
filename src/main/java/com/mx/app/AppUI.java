@@ -1,25 +1,14 @@
 package com.mx.app;
 
 import com.google.common.eventbus.Subscribe;
-import com.mx.app.domain.User;
-import com.mx.app.event.AppEvent;
-import com.mx.app.event.AppEvent.BrowserResizeEvent;
-import com.mx.app.event.AppEvent.UserLoggedOutEvent;
-import com.mx.app.event.AppEvent.UserLoginRequestedEvent;
-import com.mx.app.event.AppEventBus;
-import com.mx.app.view.LoginView;
-import com.mx.app.view.MainView;
+import com.mx.app.data.User;
+import com.mx.app.event.*;
+import com.mx.app.event.AppEvent.*;
+import com.mx.app.view.*;
 
-import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.Title;
-import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.server.Page;
-import com.vaadin.server.Responsive;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
-import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.Window;
+import com.vaadin.annotations.*;
+import com.vaadin.server.*;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import javax.servlet.annotation.WebServlet;
 

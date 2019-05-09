@@ -6,6 +6,7 @@
 package com.mx.app.component.view;
 
 import com.mx.app.component.BoxFrame;
+import com.mx.app.data.Item;
 import com.mx.app.logic.DirectoryLogic;
 import com.mx.app.logic.FileLogic;
 import com.mx.app.utils.Components;
@@ -24,7 +25,7 @@ import java.util.List;
  *
  * @author Edrd
  */
-public class FileGridLayout3 extends CssLayout {
+public class FileMosaicoLayout extends CssLayout {
 //public class FileGridLayout extends Panel implements LayoutClickListener {
 
     private HorizontalLayout boxFrame;
@@ -32,7 +33,7 @@ public class FileGridLayout3 extends CssLayout {
     private ThemeResource iconResource;
     private Image icon;
     private VerticalLayout fileDetails;
-    private File file;
+    private Item file;
     private CssLayout mainPanel;
 
     private Label lblName;
@@ -45,7 +46,7 @@ public class FileGridLayout3 extends CssLayout {
     private final DirectoryLogic viewLogicDirectory;
     
 
-    public FileGridLayout3(FileLogic mosaicoFileLogic, DirectoryLogic mosaicoDirectoryLogic, File file) {
+    public FileMosaicoLayout(FileLogic mosaicoFileLogic, DirectoryLogic mosaicoDirectoryLogic, Item file) {
         this.viewLogicFile = mosaicoFileLogic;
         this.viewLogicDirectory = mosaicoDirectoryLogic;
 
@@ -53,10 +54,10 @@ public class FileGridLayout3 extends CssLayout {
         setSizeFull();
         Responsive.makeResponsive(this);
 
-        File currentDir = new File(file.getAbsolutePath());
-        List<File> files = (List<File>) component.directoryContents(currentDir);
+        Item currentDir = new Item(file.getPath());
+        List<Item> files = (List<Item>) component.directoryContents(currentDir);
 
-        for (File file_ : files) {
+        for (Item file_ : files) {
             this.file = file_;
             BoxFrame boxframe = new BoxFrame(file_, viewLogicFile, viewLogicDirectory, downloadInvisibleButton);
             addComponent(boxframe);

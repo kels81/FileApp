@@ -5,25 +5,16 @@
  */
 package com.mx.app.component.window;
 
-import com.mx.app.logic.DirectoryLogic;
-import com.mx.app.logic.FileLogic;
+import com.mx.app.data.Item;
+import com.mx.app.logic.*;
 import com.mx.app.utils.Components;
 import com.vaadin.event.ShortcutAction;
-import com.vaadin.server.Responsive;
-import com.vaadin.server.Sizeable;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
+import com.vaadin.server.*;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 
 /**
  *
@@ -44,7 +35,7 @@ public class ConfirmWindow extends Window {
 
     private final TabSheet detailsWrapper;
 
-    public ConfirmWindow(FileLogic deleteFileLogic, DirectoryLogic deleteDirectoryLogic, File file) {
+    public ConfirmWindow(FileLogic deleteFileLogic, DirectoryLogic deleteDirectoryLogic, Item file) {
         this.viewLogicFile = deleteFileLogic;
         this.viewLogicDirectory = deleteDirectoryLogic;
 
@@ -89,7 +80,7 @@ public class ConfirmWindow extends Window {
         return body;
     }
 
-    private Component buildFooter(File file) {
+    private Component buildFooter(Item file) {
         footer = new HorizontalLayout();
         footer.setSpacing(true);
         footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
@@ -104,7 +95,7 @@ public class ConfirmWindow extends Window {
         btnAceptar = component.createButtonPrimary("Aceptar");
         btnAceptar.focus();
         btnAceptar.addClickListener((ClickEvent event) -> {
-            Path source = Paths.get(file.getAbsolutePath());
+            Path source = Paths.get(file.getPath());
 
             if (file.isDirectory()) {
                 viewLogicDirectory.deleteDirectory(source, file);

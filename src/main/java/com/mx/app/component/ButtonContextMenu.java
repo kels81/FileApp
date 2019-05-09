@@ -6,20 +6,13 @@
 package com.mx.app.component;
 
 
-import com.mx.app.component.window.ConfirmWindow;
-import com.mx.app.component.window.DirectoryTreeFolderWindow;
-import com.mx.app.component.window.EditWindow;
-import com.mx.app.logic.DirectoryLogic;
-import com.mx.app.logic.FileLogic;
+import com.mx.app.component.window.*;
+import com.mx.app.data.Item;
+import com.mx.app.logic.*;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.Window;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 
 /**
  *
@@ -27,7 +20,7 @@ import java.nio.file.Paths;
  */
 public class ButtonContextMenu extends MenuBar {
 
-    public ButtonContextMenu(Button dwnldInvisibleBtn, File file, FileLogic viewLogicFile, DirectoryLogic viewLogicDirectory) {
+    public ButtonContextMenu(Button dwnldInvisibleBtn, Item file, FileLogic viewLogicFile, DirectoryLogic viewLogicDirectory) {
         addStyleName(ValoTheme.MENUBAR_SMALL);
         addStyleName("btn-contextmenu");
 
@@ -59,14 +52,14 @@ public class ButtonContextMenu extends MenuBar {
         menu.addSeparator();
         //MOVER-COPIAR
         MenuBar.MenuItem moverCopiar = menu.addItem("Mover o Copiar", FontAwesome.COPY, e -> {
-            DirectoryTreeFolderWindow directoryTreeWindow = new DirectoryTreeFolderWindow(viewLogicFile, viewLogicDirectory, file);
+            DirectoryTreeWindow directoryTreeWindow = new DirectoryTreeWindow(viewLogicFile, viewLogicDirectory, file);
             Window w = directoryTreeWindow;
             UI.getCurrent().addWindow(w);
             w.focus();
         });
         //ZIP
         MenuBar.MenuItem zip = menu.addItem("Zip", FontAwesome.FOURSQUARE, e -> {
-            Path source = Paths.get(file.getAbsolutePath());
+            Path source = Paths.get(file.getPath());
             if (file.isDirectory()) {
                 viewLogicDirectory.zipDirectory(source, file);
             } else {

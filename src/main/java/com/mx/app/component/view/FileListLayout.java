@@ -6,28 +6,20 @@
 package com.mx.app.component.view;
 
 import com.google.common.eventbus.Subscribe;
-import com.mx.app.component.ItemProperty;
+import com.mx.app.data.Item;
+import com.mx.app.utils.ItemProperty;
 import com.mx.app.event.AppEvent.BrowserResizeEvent;
 import com.mx.app.event.AppEventBus;
-import com.mx.app.logic.DirectoryLogic;
-import com.mx.app.logic.FileLogic;
+import com.mx.app.logic.*;
 import com.mx.app.utils.Components;
-import com.vaadin.data.provider.DataProvider;
-import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.data.provider.*;
+import com.vaadin.navigator.*;
 import com.vaadin.server.Page;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Grid;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Grid.Column;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.renderers.ComponentRenderer;
 import java.io.File;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -37,7 +29,7 @@ public class FileListLayout extends VerticalLayout implements View {
 
     private final Components component = new Components();
 
-    private Grid<File> table;
+    private Grid<Item> table;
     private final Button downloadInvisibleButton = new Button();
 
     private final FileLogic viewLogicFile;
@@ -46,11 +38,11 @@ public class FileListLayout extends VerticalLayout implements View {
     private final String COL_TAMANIO = "tamanio";
     private final String COL_MODIFICADO = "modificado";
 
-    private static final Set<Column<File, ?>> COLLAPSIBLE_COLUMNS = new LinkedHashSet<>();
+    private static final Set<Column<Item, ?>> COLLAPSIBLE_COLUMNS = new LinkedHashSet<>();
 
     private final String[] DEFAULT_COLLAPSIBLE = {COL_TAMANIO, COL_MODIFICADO};
 
-    public FileListLayout(FileLogic mosaicoFileLogic, DirectoryLogic mosaicoDirectoryLogic, File file) {
+    public FileListLayout(FileLogic mosaicoFileLogic, DirectoryLogic mosaicoDirectoryLogic, Item file) {
         this.viewLogicFile = mosaicoFileLogic;
         this.viewLogicDirectory = mosaicoDirectoryLogic;
 
@@ -79,7 +71,7 @@ public class FileListLayout extends VerticalLayout implements View {
         AppEventBus.unregister(this);
     }
 
-    private Grid<File> buildTable(File file) {
+    private Grid<Item> buildTable(Item file) {
         table = new Grid<>();
         table.setDataProvider(crearContenedor(file));
         table.setSizeFull();
@@ -88,7 +80,7 @@ public class FileListLayout extends VerticalLayout implements View {
         table.setColumnReorderingAllowed(false);
         table.addItemClickListener((event) -> {
             if (event.getItem() != null) {
-                File file_ = new File(event.getItem().getAbsolutePath());
+                Item file_ = new Item(event.getItem().getPath());
                 if (event.getMouseEventDetails().isDoubleClick()) {
                     if (file_.isDirectory()) {
                         viewLogicFile.cleanAndDisplay(file_);
@@ -107,8 +99,8 @@ public class FileListLayout extends VerticalLayout implements View {
         return table;
     }
 
-    private ListDataProvider<File> crearContenedor(File directory) {
-        ListDataProvider<File> dataProvider = DataProvider.ofCollection(component.directoryContents(directory));
+    private ListDataProvider<Item> crearContenedor(Item directory) {
+        ListDataProvider<Item> dataProvider = DataProvider.ofCollection(component.directoryContents(directory));
 
 //        dataProvider.setSortOrder(File::getName,
 //                SortDirection.ASCENDING);
@@ -167,7 +159,7 @@ public class FileListLayout extends VerticalLayout implements View {
         System.out.println("Entra a browserResized: " + Page.getCurrent().getBrowserWindowWidth());
         List<String> lstColapsibleColumns = Arrays.asList(DEFAULT_COLLAPSIBLE);
 //        if (defaultColumnsVisible()) {
-        for (Column<File, ?> column : COLLAPSIBLE_COLUMNS) {
+        for (Column<Item, ?> column : COLLAPSIBLE_COLUMNS) {
             if (lstColapsibleColumns.contains(column.getId())) {
                 column.setHidden(Page.getCurrent().getBrowserWindowWidth() < 800);
             }

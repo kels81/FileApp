@@ -6,21 +6,14 @@
 package com.mx.app.component.view;
 
 import com.mx.app.component.ButtonContextMenu;
-import com.mx.app.component.ItemProperty;
-import com.mx.app.logic.DirectoryLogic;
-import com.mx.app.logic.FileLogic;
+import com.mx.app.data.Item;
+import com.mx.app.utils.ItemProperty;
+import com.mx.app.logic.*;
 import com.mx.app.utils.Components;
-import com.vaadin.event.LayoutEvents;
+import com.vaadin.event.*;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.server.Responsive;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
 import java.util.List;
@@ -29,12 +22,12 @@ import java.util.List;
  *
  * @author Edrd
  */
-public class FileGridLayout extends CssLayout {
+public class FileMosaicoLayout2 extends CssLayout {
 
     private HorizontalLayout boxFrame;
     private HorizontalLayout mosaicoLayout;
     private VerticalLayout fileDetails;
-    private File file;
+    private Item file;
     private CssLayout mainPanel;
 
     private Label lblNumberOfElementsAndFileSize;
@@ -50,7 +43,7 @@ public class FileGridLayout extends CssLayout {
     private final FileLogic viewLogicFile;
     private final DirectoryLogic viewLogicDirectory;
 
-    public FileGridLayout(FileLogic mosaicoFileLogic, DirectoryLogic mosaicoDirectoryLogic, File file) {
+    public FileMosaicoLayout2(FileLogic mosaicoFileLogic, DirectoryLogic mosaicoDirectoryLogic, Item file) {
         this.viewLogicFile = mosaicoFileLogic;
         this.viewLogicDirectory = mosaicoDirectoryLogic;
 
@@ -58,10 +51,10 @@ public class FileGridLayout extends CssLayout {
         setSizeFull();
         Responsive.makeResponsive(this);
 
-        File currentDir = new File(file.getAbsolutePath());
-        List<File> files = (List<File>) component.directoryContents(currentDir);
+        Item currentDir = new Item(file.getPath());
+        List<Item> files = (List<Item>) component.directoryContents(currentDir);
 
-        for (File file_ : files) {
+        for (Item file_ : files) {
             this.file = file_;
             addComponent(buildMosaico(file_));
         }
@@ -72,7 +65,7 @@ public class FileGridLayout extends CssLayout {
         addComponent(downloadInvisibleButton);
     }
 
-    private Component buildMosaico(File file) {
+    private Component buildMosaico(Item file) {
         mainPanel = new CssLayout();
         mainPanel.addStyleName("mainPanel");
         mainPanel.addComponent(buildBoxFrame(file));
@@ -80,7 +73,7 @@ public class FileGridLayout extends CssLayout {
         return mainPanel;
     }
 
-    private HorizontalLayout buildBoxFrame(File file) {
+    private HorizontalLayout buildBoxFrame(Item file) {
         boxFrame = new HorizontalLayout();
         boxFrame.setSizeFull();
         boxFrame.addStyleName("frame");
