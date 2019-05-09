@@ -6,14 +6,13 @@
 package com.mx.app.component;
 
 import com.mx.app.data.Item;
-import com.mx.app.logic.DirectoryLogic;
+import com.mx.app.event.AppCleanAndDisplay;
 import com.mx.app.utils.Components;
 import com.mx.app.utils.Constantes;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import java.io.File;
 import java.util.*;
 
 /**
@@ -24,13 +23,16 @@ public class Breadcrumb extends HorizontalLayout {
 
     private Button btnPath;
     private Label lblArrow;
+    private final AppCleanAndDisplay appCleanDisplay;
 
     private final Components component = new Components();
     
-    private final DirectoryLogic viewLogicDirectory;
+    //private final DirectoryLogic viewLogicDirectory;
 
-    public Breadcrumb(DirectoryLogic breadcrumbDirectoryLogic, Item itemDir) {
-        this.viewLogicDirectory = breadcrumbDirectoryLogic;
+//    public Breadcrumb(DirectoryLogic breadcrumbDirectoryLogic, Item itemDir) {
+    public Breadcrumb(Item itemDir, AppCleanAndDisplay cleanDisplay) {
+        //this.viewLogicDirectory = breadcrumbDirectoryLogic;
+        this.appCleanDisplay = cleanDisplay;
         
         List<Item> listDirectories = getListDirectories(itemDir);
         int i = 1;
@@ -38,10 +40,8 @@ public class Breadcrumb extends HorizontalLayout {
             btnPath = component.createButtonPath(directory.getName());
             btnPath.setEnabled((i != listDirectories.size()));
             btnPath.addStyleName((i == listDirectories.size() ? "labelColored" : ""));
-            btnPath.addClickListener(event -> {
-//                System.out.println("evnt: " + event.getComponent().getCaption());
-                viewLogicDirectory.cleanAndDisplay(directory);
-            });
+            btnPath.addClickListener((event) -> showContentDirectory(directory));
+
             addComponent(btnPath);
             if (i != listDirectories.size()) {
                 lblArrow = new Label(FontAwesome.ANGLE_RIGHT.getHtml(), ContentMode.HTML);
@@ -74,5 +74,9 @@ public class Breadcrumb extends HorizontalLayout {
         System.out.println("newPath = " + newPath.toString());
         return listDirectories;
     }
-
+    
+    private void showContentDirectory(Item directory) {
+        //viewLogicDirectory.cleanAndDisplay(directory);
+        appCleanDisplay.showContentDirectory(directory);
+    }
 }

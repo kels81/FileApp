@@ -70,6 +70,26 @@ public class Item {
         return file.renameTo(new File(destino.getPath()));
     }
     
+    public List<Item> getContentDirectory(Item directory) {
+        // ARRAY QUE VA A ACONTENER TODOS LOS ARCHIVOS ORDENADOS POR TIPO Y ALFABETICAMENTE
+        List<Item> allDocsLst = new ArrayList<>();
+//        Item[] files = directory.listFiles();
+        List<Item> fileLst = new ArrayList<>();
+        List<Item> directoryLst = new ArrayList<>();
+        for (Item file : directory.getList()) {
+            if (file.isDirectory()) {
+                directoryLst.add(file);
+                //directoryContents(file);   //para conocer los archivos de las subcarpetas
+            } else {
+                fileLst.add(file);
+            }
+        }
+        allDocsLst.addAll(directoryLst);
+        allDocsLst.addAll(fileLst);
+
+        return allDocsLst;
+    }
+    
     public List<Item> getListDirectories(Item directory) {
         List<Item> list = new ArrayList<>();
         for (File f : new File(directory.getPath()).listFiles((FileFilter) DirectoryFileFilter.DIRECTORY)) {

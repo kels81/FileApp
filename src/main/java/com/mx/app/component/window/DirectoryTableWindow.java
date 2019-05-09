@@ -5,32 +5,35 @@
  */
 package com.mx.app.component.window;
 
+import com.mx.app.component.Breadcrumb;
 import com.mx.app.data.Item;
 import com.mx.app.logic.*;
 import com.mx.app.utils.*;
-import com.vaadin.data.TreeData;
-import com.vaadin.data.provider.TreeDataProvider;
-import com.vaadin.event.CollapseEvent;
-import com.vaadin.server.Responsive;
+import com.vaadin.data.provider.DataProvider;
+import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.*;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.ui.Tree.ItemClick;
+import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.Grid.ItemClick;
+import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.renderers.ComponentRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 import java.nio.file.*;
 import java.util.*;
 
 /**
  *
- * @author Edrd
+ * @author ecortesh
  */
-public class DirectoryTreeWindow extends Window {
+public class DirectoryTableWindow extends Window {
 
     private final Item origenPath;
+    private HorizontalLayout header;
     private final VerticalLayout content;
     private VerticalLayout body;
     private HorizontalLayout footer;
-    private Tree<Item> tree;
+    private Grid<Item> table;
     private final TabSheet detailsWrapper;
     private Label lblFileName;
     private final Item fileTo;
@@ -38,16 +41,18 @@ public class DirectoryTreeWindow extends Window {
     private Button btnCancelar;
     private Button btnMover;
     private Button btnCopiar;
-    private int sizeDepth;
 
     private final Components component = new Components();
-    private final TreeData<Item> treeData = new TreeData<>();
-    private final List<Integer> depthLst = new ArrayList<>();
 
     private final FileLogic viewLogicFile;
     private final DirectoryLogic viewLogicDirectory;
 
-    public DirectoryTreeWindow(FileLogic moveCopyFileLogic, DirectoryLogic moveCopyDirectoryLogic, Item file) {
+//    private final String COL_TAMANIO = "tamanio";
+//    private final String COL_MODIFICADO = "modificado";
+    private static final Set<Column<Item, ?>> COLLAPSIBLE_COLUMNS = new LinkedHashSet<>();
+
+//    private final String[] DEFAULT_COLLAPSIBLE = {COL_TAMANIO, COL_MODIFICADO};
+    public DirectoryTableWindow(FileLogic moveCopyFileLogic, DirectoryLogic moveCopyDirectoryLogic, Item file) {
         this.viewLogicFile = moveCopyFileLogic;
         this.viewLogicDirectory = moveCopyDirectoryLogic;
 
@@ -72,7 +77,7 @@ public class DirectoryTreeWindow extends Window {
         detailsWrapper = new TabSheet();
         detailsWrapper.setSizeFull();
         detailsWrapper.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
-        detailsWrapper.addTab(body());
+        detailsWrapper.addTab(body(origenPath));
 
         content.addComponentsAndExpand(detailsWrapper);
         content.addComponent(buildFooter());
@@ -82,7 +87,7 @@ public class DirectoryTreeWindow extends Window {
         //Page.getCurrent().getStyles().add(".v-verticallayout {border: 1px solid blue;} .v-verticallayout .v-slot {border: 1px solid red;}");
     }
 
-    private VerticalLayout body() {
+    private VerticalLayout body(Item directory) {
         body = new VerticalLayout();
         //body.setCaption("Mover o Copiar" + "  \""+fileTo.getName()+"\"");
         body.setCaption("Mover o Copiar");
@@ -90,13 +95,14 @@ public class DirectoryTreeWindow extends Window {
         body.setSpacing(true);
         body.addComponent(buildFileName());
         body.addComponent(new Label("Selecciona folder destino:"));
-        
-        tree = buildTree();
-        body.addComponentsAndExpand(tree);
+        body.addComponent(buildHeader(directory));
+
+        table = buildTable(directory);
+        body.addComponentsAndExpand(table);
 
         return body;
     }
-   
+
     private Label buildFileName() {
         lblFileName = new Label("\"" + fileTo.getName() + "\"");
         lblFileName.addStyleName(ValoTheme.LABEL_COLORED);
@@ -104,88 +110,81 @@ public class DirectoryTreeWindow extends Window {
         return lblFileName;
     }
 
-    private Tree<Item> buildTree() {
-        tree = new Tree<>();
-        tree.setStyleName("treeApp");       // SE CREA ESTE ESTILO PARA QUE NO MUESTRE EL BORDER DE FOCUS CUANDO SE SELECCIONA EL ITEM
-        tree.setSelectionMode(Grid.SelectionMode.NONE);
-        tree.setDataProvider(crearContenedor(origenPath));
-        tree.setItemCaptionGenerator(Item::getName);
-        tree.setItemIconGenerator(Item -> new ThemeResource("img/file_manager/folder_24.png"));
-//        tree.setItemIconGenerator(File -> VaadinIcons.FOLDER);
-        tree.setRowHeight(35);
-        tree.addCollapseListener((event) -> itemCollapsed(event));
-        tree.addItemClickListener((event) -> itemClicked(event));
-        // PARA CUANDO SE QUIERE MOSTRAR CARPETA ROOT Y CARPETAS DENTRO DE ELLA 1ER NIVEL
-        tree.expand(tree.getTreeData().getRootItems());
+    private Component buildHeader(Item directory) {
+        header = new HorizontalLayout();
+        header.setWidth(100.0f, Sizeable.Unit.PERCENTAGE);
 
-        return tree;
+        Breadcrumb pathDir = new Breadcrumb(directory, this::showContentDirectory);
+        header.addComponents(pathDir);
+
+        return header;
     }
 
-    private void itemCollapsed(CollapseEvent<Item> event) {
-        Item itemId = event.getCollapsedItem();
-        tree.collapseRecursively(getSelectedItems(itemId), getSizeDepthChildren(itemId));
+    private Grid<Item> buildTable(Item directory) {
+        table = new Grid<>();
+        table.setDataProvider(crearContenedor(directory));
+        //table.setSelectionMode(SelectionMode.MULTI);
+        table.setSizeFull();
+        addColumns();
+        table.setRowHeight(44);
+        table.setColumnReorderingAllowed(false);
+        table.setHeaderVisible(false);
+        table.addItemClickListener((event) -> itemClicked(event));
+
+        return table;
     }
-    
+
     private void itemClicked(ItemClick<Item> event) {
-            Item itemId = event.getItem();
+        Item itemId = event.getItem();
+        if (itemId != null) {
             targetDir = itemId;
-            tree.select(itemId);
-            tree.setStyleName("rowSelected");   // SE CREA ESTE ESTILO PARA QUE MUESTRE QUE ESTA SELECCIONADO EL ITEM
             btnCopiar.setEnabled(true);
             btnMover.setEnabled(true);
-            //VALIDACION PARA EXPANDIR NODE DESDE EL CAPTION
+
             if (event.getMouseEventDetails().isDoubleClick()) {
-                if (tree.isExpanded(itemId)) {
-                    tree.collapse(itemId);
-                } else {
-                    tree.expand(itemId);
-                }
+                showContentDirectory(itemId);
             }
-    }
-    
-    private TreeDataProvider<Item> crearContenedor(Item directory) {
-        treeData.addItem(null, directory);
-        // add children for the root level items
-        createTreeContent(directory);
-        //files.forEach(dir -> treeData.addItems(dir, getChildren(dir)));
-        return new TreeDataProvider<>(treeData);
-    }
-
-    private List<Item> getListSubDirectory(Item directory) {
-//        Item[] arrayFiles = directory.listFiles((FileFilter) DirectoryFileFilter.DIRECTORY);     //PARA OBTENER UNICAMENTE DIRECTORIOS DE UN DIRECTORIO
-//        Arrays.sort(arrayFiles);
-//        return Arrays.asList(arrayFiles);
-        return directory.getListDirectories(directory);
-    }
-
-    private void createTreeContent(Item parentDirectory) {
-        for (Item childrenDirectory : getListSubDirectory(parentDirectory)) {
-            treeData.addItem(parentDirectory, childrenDirectory);
-            createTreeContent(childrenDirectory);
         }
     }
 
-    private List<Item> getSelectedItems(Item itemId) {
-        List<Item> selectedItem = new ArrayList<>();
-        selectedItem.add(itemId);
-        return selectedItem;
+    private ListDataProvider<Item> crearContenedor(Item directory) {
+        ListDataProvider<Item> dataProvider = DataProvider.ofCollection(directory.getListDirectories(directory));
+        return dataProvider;
     }
 
-    private int getSizeDepthChildren(Item parentItemId) {
-        depthLst.clear();
-        getChildrens(parentItemId);
-        return Collections.max(depthLst);
+    private void addColumns() {
+
+        COLLAPSIBLE_COLUMNS
+                .add(table.addColumn(file -> new ItemProperty(file).buildIcon(false), new ComponentRenderer())
+                        .setResizable(false));
+        COLLAPSIBLE_COLUMNS
+                .add(table.addColumn(file -> file.getName())
+                        .setResizable(false)
+                        .setExpandRatio(1));
+//        COLLAPSIBLE_COLUMNS
+//                .add(table.addColumn(file -> new CheckBox(), new ComponentRenderer())
+//                        .setStyleGenerator(item -> "v-align-center"));
+
     }
 
-    private void getChildrens(Item startItemId) {
-        sizeDepth = 1;
-        for (Item id : getListSubDirectory(startItemId)) {
-            getChildrens(id);
-            sizeDepth++;
-        }
-        depthLst.add(sizeDepth);
-    }
-    
+//    @Subscribe
+//    public void browserResized(final AppEvent.BrowserResizeEvent event) {
+//        browserResized();
+//    }
+//
+//    private void browserResized() {
+//        //Some columns are collapsed when browser window width gets small
+//        // enough to make the table fit better.
+//        System.out.println("Entra a browserResized: " + Page.getCurrent().getBrowserWindowWidth());
+//        List<String> lstColapsibleColumns = Arrays.asList(DEFAULT_COLLAPSIBLE);
+////        if (defaultColumnsVisible()) {
+//        for (Grid.Column<Item, ?> column : COLLAPSIBLE_COLUMNS) {
+//            if (lstColapsibleColumns.contains(column.getId())) {
+//                column.setHidden(Page.getCurrent().getBrowserWindowWidth() < 800);
+//            }
+//        }
+////        }
+//    }
     private Component buildFooter() {
         footer = new HorizontalLayout();
         footer.setSpacing(true);
@@ -201,7 +200,7 @@ public class DirectoryTreeWindow extends Window {
         btnMover.setEnabled(false);
         btnMover.addClickListener((Button.ClickEvent event) -> {
             Path source = Paths.get(fileTo.getPath());
-            Path target = Paths.get(targetDir.getPath().concat("\\").concat(fileTo.getName())); 
+            Path target = Paths.get(targetDir.getPath().concat("\\").concat(fileTo.getName()));
 //            Path target = Paths.get(tree.asSingleSelect().getValue() + "\\" + fileTo.getName());
 
             if (fileTo.isDirectory()) {
@@ -236,6 +235,11 @@ public class DirectoryTreeWindow extends Window {
         footer.setComponentAlignment(btnCopiar, Alignment.TOP_RIGHT);
         return footer;
     }
-
+    
+    private void showContentDirectory(Item directory) {
+        header.removeAllComponents();
+        header.addComponent(new Breadcrumb(directory, this::showContentDirectory));
+        table.setDataProvider(crearContenedor(directory));
+    }
 
 }

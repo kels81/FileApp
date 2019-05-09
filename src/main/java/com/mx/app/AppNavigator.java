@@ -13,7 +13,7 @@ public class AppNavigator extends Navigator {
     private static final String TRACKER_ID = null;// "UA-658457-6";
 //    private GoogleAnalyticsTracker tracker;
 
-    private static final AppViewType ERROR_VIEW = AppViewType.TRANSACTIONS;
+    private static final AppViewType ERROR_VIEW = AppViewType.ALL_FILES;
     private ViewProvider errorViewProvider;
 
     public AppNavigator(final ComponentContainer container) {

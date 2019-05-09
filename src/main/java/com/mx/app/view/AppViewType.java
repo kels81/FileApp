@@ -1,16 +1,17 @@
 package com.mx.app.view;
 
 import com.mx.app.view.content.ContentView;
-import com.mx.app.view.transactions.TransactionsView;
-import com.mx.app.view.schedule.ScheduleView;
+import com.mx.app.view.deleted.Bin;
+import com.mx.app.view.favourites.Favourites;
+import com.mx.app.view.settings.Settings;
 import com.vaadin.navigator.View;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Resource;
+import com.vaadin.server.*;
 
 public enum AppViewType {
-    TRANSACTIONS("transactions", TransactionsView.class, FontAwesome.TABLE, true),
-    SCHEDULE("schedule", ScheduleView.class, FontAwesome.CALENDAR_O, false),
-    CONTENT("archivos", ContentView.class, FontAwesome.CLOUD, false);
+    ALL_FILES("archivos", ContentView.class, FontAwesome.CLOUD, false),
+    FAVOURITES("favoritos", Favourites.class, FontAwesome.STAR, true),
+    BIN("eliminados", Bin.class, FontAwesome.TRASH, true),
+    SETTINGS("configuracion", Settings.class, FontAwesome.GEAR, false);
 
     private final String viewName;
     private final Class<? extends View> viewClass;

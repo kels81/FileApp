@@ -15,7 +15,6 @@ import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.server.Responsive;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import java.io.File;
 import java.util.List;
 
 /**
@@ -31,11 +30,10 @@ public class FileMosaicoLayout2 extends CssLayout {
     private CssLayout mainPanel;
 
     private Label lblNumberOfElementsAndFileSize;
-    
+
     private ButtonContextMenu btnContextMenu;
-    private  Component boxContent;
+    private Component boxContent;
     private ItemProperty itemProperty;
-    
 
     private final Button downloadInvisibleButton = new Button();
     private final Components component = new Components();
@@ -52,13 +50,14 @@ public class FileMosaicoLayout2 extends CssLayout {
         Responsive.makeResponsive(this);
 
         Item currentDir = new Item(file.getPath());
-        List<Item> files = (List<Item>) component.directoryContents(currentDir);
+        //        List<Item> files = (List<Item>) component.directoryContents(currentDir);
+        List<Item> files = currentDir.getContentDirectory(currentDir);
 
         for (Item file_ : files) {
             this.file = file_;
             addComponent(buildMosaico(file_));
         }
-        
+
         //BUTTON PARA PODER DESCARGAR ARCHIVOS POR MEDIO DEL ButtonContextMenu
         downloadInvisibleButton.setId("DownloadButtonId");
         downloadInvisibleButton.addStyleName("InvisibleButton");
@@ -95,22 +94,22 @@ public class FileMosaicoLayout2 extends CssLayout {
                 }
             }
         });
-        
-        boxContent = buildBoxContent(); 
-        btnContextMenu = component.createButtonContextMenu(downloadInvisibleButton, file, viewLogicFile, viewLogicDirectory);
-        
+
+        boxContent = buildBoxContent();
+        btnContextMenu = new ButtonContextMenu(downloadInvisibleButton, file, viewLogicFile, viewLogicDirectory);
+
         boxFrame.addComponents(boxContent, btnContextMenu);
         boxFrame.setExpandRatio(boxContent, 1.0f);
         boxFrame.setComponentAlignment(btnContextMenu, Alignment.TOP_RIGHT);
 
         return boxFrame;
     }
-    
+
     private HorizontalLayout buildBoxContent() {
         itemProperty = new ItemProperty(file);
         Component icon = itemProperty.buildIcon(true);
         Component details = buildFileDetails();
-        
+
         mosaicoLayout = new HorizontalLayout();
         mosaicoLayout.setSizeFull();
         mosaicoLayout.setMargin(false);
@@ -135,7 +134,7 @@ public class FileMosaicoLayout2 extends CssLayout {
         fileDetails.setComponentAlignment(numberOfElements, Alignment.BOTTOM_LEFT);
         return fileDetails;
     }
-    
+
     public Label getFileName() {
         Label lblName = new Label(file.getName());
         lblName.setSizeFull();
@@ -152,5 +151,5 @@ public class FileMosaicoLayout2 extends CssLayout {
 
         return lblNumberOfElementsAndFileSize;
     }
-    
+
 }

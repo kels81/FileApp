@@ -53,7 +53,9 @@ public class ButtonContextMenu extends MenuBar {
         //MOVER-COPIAR
         MenuBar.MenuItem moverCopiar = menu.addItem("Mover o Copiar", FontAwesome.COPY, e -> {
             DirectoryTreeWindow directoryTreeWindow = new DirectoryTreeWindow(viewLogicFile, viewLogicDirectory, file);
-            Window w = directoryTreeWindow;
+            DirectoryTableWindow directoryTableWindow = new DirectoryTableWindow(viewLogicFile, viewLogicDirectory, file);
+//            Window w = directoryTreeWindow;
+            Window w = directoryTableWindow;
             UI.getCurrent().addWindow(w);
             w.focus();
         });

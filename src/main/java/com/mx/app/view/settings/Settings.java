@@ -1,20 +1,17 @@
-package com.mx.app.view.schedule;
+package com.mx.app.view.settings;
 
-import com.vaadin.navigator.View;
+import com.vaadin.navigator.*;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
 
 
 @SuppressWarnings("serial")
-public final class ScheduleView extends VerticalLayout implements View {
+public final class Settings extends VerticalLayout implements View {
 
-    public ScheduleView() {
+    public Settings() {
         setSizeFull();
         addStyleName("transactions");
         setMargin(false);
@@ -30,7 +27,7 @@ public final class ScheduleView extends VerticalLayout implements View {
         header.addStyleName("viewheader");
         Responsive.makeResponsive(header);
 
-        Label title = new Label("Schedule");
+        Label title = new Label("Configuración");
         title.setSizeUndefined();
         title.addStyleName(ValoTheme.LABEL_H1);
         title.addStyleName(ValoTheme.LABEL_NO_MARGIN);

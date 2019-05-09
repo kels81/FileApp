@@ -1,20 +1,17 @@
-package com.mx.app.view.transactions;
+package com.mx.app.view.deleted;
 
-import com.vaadin.navigator.View;
+import com.vaadin.navigator.*;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
 
 
 @SuppressWarnings("serial")
-public final class TransactionsView extends VerticalLayout implements View {
+public final class Bin extends VerticalLayout implements View {
 
-    public TransactionsView() {
+    public Bin() {
         setSizeFull();
         addStyleName("transactions");
         setMargin(false);
@@ -30,7 +27,7 @@ public final class TransactionsView extends VerticalLayout implements View {
         header.addStyleName("viewheader");
         Responsive.makeResponsive(header);
 
-        Label title = new Label("Transactions");
+        Label title = new Label("Eliminados");
         title.setSizeUndefined();
         title.addStyleName(ValoTheme.LABEL_H1);
         title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
