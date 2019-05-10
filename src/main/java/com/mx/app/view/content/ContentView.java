@@ -29,7 +29,7 @@ public final class ContentView extends VerticalLayout implements View {
     private Boolean isVisible = true;
 
     public ContentView() {
-        this.origenPath = new Item(Constantes.ROOT_PATH);
+        this.origenPath = new Item(Constantes.ALL_FILES);
 
         setSizeFull();
         addStyleName("content");

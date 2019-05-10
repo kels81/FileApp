@@ -41,6 +41,15 @@ public class ButtonContextMenu extends MenuBar {
             UI.getCurrent().addWindow(w);
             w.focus();
         });
+        //FAVORITOS
+        MenuBar.MenuItem favorito = menu.addItem("Favorito", FontAwesome.STAR, e -> {
+            Path source = Paths.get(file.getPath());
+            if (file.isDirectory()) {
+                viewLogicDirectory.favouriteDirectory(source, file);
+            } else {
+                viewLogicFile.favouriteFile(source, file);
+            }
+        });
         //BORRAR
         MenuBar.MenuItem borrar = menu.addItem("Eliminar", FontAwesome.TRASH, e -> {
             ConfirmWindow confirmWindow = new ConfirmWindow(viewLogicFile, viewLogicDirectory, file);
@@ -54,8 +63,8 @@ public class ButtonContextMenu extends MenuBar {
         MenuBar.MenuItem moverCopiar = menu.addItem("Mover o Copiar", FontAwesome.COPY, e -> {
             DirectoryTreeWindow directoryTreeWindow = new DirectoryTreeWindow(viewLogicFile, viewLogicDirectory, file);
             DirectoryTableWindow directoryTableWindow = new DirectoryTableWindow(viewLogicFile, viewLogicDirectory, file);
-//            Window w = directoryTreeWindow;
-            Window w = directoryTableWindow;
+            Window w = directoryTreeWindow;
+//            Window w = directoryTableWindow;
             UI.getCurrent().addWindow(w);
             w.focus();
         });

@@ -5,15 +5,8 @@
  */
 package com.mx.app.utils;
 
-import com.mx.app.component.ButtonContextMenu;
-import com.mx.app.data.Item;
-import com.mx.app.logic.DirectoryLogic;
-import com.mx.app.logic.FileLogic;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -49,9 +42,21 @@ public class Components {
     public Button createButtonPath(String caption) {
         Button btn = new Button(caption);
         btn.setStyleName("btnPath");
-        //btn.addStyleName(ValoTheme.BUTTON_SMALL);
-        //btn.setEnabled(false);
         return btn;
+    }
+    
+    public MenuBar createMenuButtonPath() {
+        MenuBar menubtn = new MenuBar();
+        menubtn.setStyleName(ValoTheme.MENUBAR_BORDERLESS);
+        return menubtn;
+    }
+    
+    public Label createLabelHeader(String caption) {
+        Label lbl = new Label(caption);
+        lbl.setSizeUndefined();
+        lbl.addStyleName(ValoTheme.LABEL_H1);
+        lbl.addStyleName(ValoTheme.LABEL_NO_MARGIN);
+        return lbl;
     }
     
 

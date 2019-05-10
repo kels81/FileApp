@@ -7,8 +7,7 @@ package com.mx.app.component;
 
 import com.mx.app.data.Item;
 import com.mx.app.event.AppCleanAndDisplay;
-import com.mx.app.utils.Components;
-import com.mx.app.utils.Constantes;
+import com.mx.app.utils.*;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.*;
@@ -26,14 +25,13 @@ public class Breadcrumb extends HorizontalLayout {
     private final AppCleanAndDisplay appCleanDisplay;
 
     private final Components component = new Components();
-    
-    //private final DirectoryLogic viewLogicDirectory;
 
+    //private final DirectoryLogic viewLogicDirectory;
 //    public Breadcrumb(DirectoryLogic breadcrumbDirectoryLogic, Item itemDir) {
     public Breadcrumb(Item itemDir, AppCleanAndDisplay cleanDisplay) {
         //this.viewLogicDirectory = breadcrumbDirectoryLogic;
         this.appCleanDisplay = cleanDisplay;
-        
+
         List<Item> listDirectories = getListDirectories(itemDir);
         int i = 1;
         for (Item directory : listDirectories) {
@@ -42,6 +40,9 @@ public class Breadcrumb extends HorizontalLayout {
             btnPath.addStyleName((i == listDirectories.size() ? "labelColored" : ""));
             btnPath.addClickListener((event) -> showContentDirectory(directory));
 
+            Component menuButton = createMenuButton(itemDir);
+            addComponent(menuButton);
+            
             addComponent(btnPath);
             if (i != listDirectories.size()) {
                 lblArrow = new Label(FontAwesome.ANGLE_RIGHT.getHtml(), ContentMode.HTML);
@@ -74,9 +75,23 @@ public class Breadcrumb extends HorizontalLayout {
         System.out.println("newPath = " + newPath.toString());
         return listDirectories;
     }
-    
+
     private void showContentDirectory(Item directory) {
         //viewLogicDirectory.cleanAndDisplay(directory);
         appCleanDisplay.showContentDirectory(directory);
+    }
+
+    private Component createMenuButton(Item itemDir) {
+        MenuBar menuBtn = component.createMenuButtonPath();
+        MenuBar.MenuItem dropdown = menuBtn.addItem("", FontAwesome.FOLDER_O, null);
+        
+        List<Item> listDirectories = getListDirectories(itemDir);
+        listDirectories = listDirectories.subList(0, (listDirectories.size() - 1));
+        
+        for (Item directory : listDirectories) {
+            dropdown.addItem(directory.getName(), null);
+        }
+
+        return menuBtn;
     }
 }

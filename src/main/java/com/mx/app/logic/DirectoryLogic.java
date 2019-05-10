@@ -6,9 +6,12 @@
 package com.mx.app.logic;
 
 import com.mx.app.data.Item;
+import com.mx.app.utils.Constantes;
 import com.mx.app.utils.Notifications;
 import com.mx.app.utils.ZipUtils;
 import com.mx.app.view.content.ContentView;
+import com.mx.app.view.deleted.Bin;
+import com.mx.app.view.favourites.Favourites;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
@@ -35,14 +38,24 @@ import org.apache.commons.io.FileUtils;
  */
 public class DirectoryLogic {
 
-    private final ContentView view;
+    private ContentView viewFiles;
+    private Favourites viewFavourites;
+    private Bin viewBin;
 
     private final Notifications notification = new Notifications();
 
     private final List<String> filesListInDir = new ArrayList<>();
 
     public DirectoryLogic(ContentView view) {
-        this.view = view;
+        this.viewFiles = view;
+    }
+    
+    public DirectoryLogic(Favourites view) {
+        this.viewFavourites = view;
+    }
+    
+    public DirectoryLogic(Bin view) {
+        this.viewBin = view;
     }
 
     public void downloadDirectory(Item directory, Button dwnldInvisibleBtn) {
@@ -107,7 +120,37 @@ public class DirectoryLogic {
         }
     }
 
+    public void favouriteDirectory(Path sourceDir, Item directory) {
+        System.out.println("favourite directory");
+        try {
+            Path targetDir = Paths.get(Constantes.FAVOURITES.concat("\\").concat(directory.getName()));
+            //FileUtils.copyDirectoryToDirectory(sourceDir.toFile(), targetDir.toFile());
+            FileUtils.copyDirectory(sourceDir.toFile(), targetDir.toFile());
+            // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
+            String dir = sourceDir.getParent().toString();
+            cleanAndDisplay(new Item(dir));
+            notification.createSuccess("Se agrego el archivo a favoritos: " + directory.getName());
+        } catch (IOException ex) {
+            notification.createFailure("Problemas al agregar a favoritos el archivo");
+        }
+    }
+    
     public void deleteDirectory(Path sourceDir, Item directory) {
+        System.out.println("favourite directory");
+        try {
+            Path targetDir = Paths.get(Constantes.BIN.concat("\\").concat(directory.getName()));
+            //FileUtils.copyDirectoryToDirectory(sourceDir.toFile(), targetDir.toFile());
+            FileUtils.moveDirectory(sourceDir.toFile(), targetDir.toFile());
+            // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
+            String dir = sourceDir.getParent().toString();
+            cleanAndDisplay(new Item(dir));
+            notification.createSuccess("Se eliminó el archivo correctamente: " + directory.getName());
+        } catch (IOException ex) {
+            notification.createFailure("No se elimino el archivo");
+        }
+    }
+
+    public void emptyBinDirectory(Path sourceDir, Item directory) {
         System.out.println("delete directory");
         try {
             FileUtils.deleteDirectory(new File(directory.getPath()));
@@ -238,7 +281,7 @@ public class DirectoryLogic {
 
     public void cleanAndDisplay(Item file) {
         // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
-        this.view.cleanAndDisplay(file);
+        this.viewFiles.cleanAndDisplay(file);
     }
 
 }

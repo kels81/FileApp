@@ -56,7 +56,7 @@ public class DirectoryTableWindow extends Window {
         this.viewLogicFile = moveCopyFileLogic;
         this.viewLogicDirectory = moveCopyDirectoryLogic;
 
-        this.origenPath = new Item(Constantes.ROOT_PATH);
+        this.origenPath = new Item(Constantes.ALL_FILES);
         this.fileTo = file;
 
         Responsive.makeResponsive(this);

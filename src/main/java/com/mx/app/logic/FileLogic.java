@@ -6,8 +6,11 @@
 package com.mx.app.logic;
 
 import com.mx.app.data.Item;
+import com.mx.app.utils.Constantes;
 import com.mx.app.utils.Notifications;
 import com.mx.app.view.content.ContentView;
+import com.mx.app.view.deleted.Bin;
+import com.mx.app.view.favourites.Favourites;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
@@ -21,6 +24,7 @@ import java.io.Serializable;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.FilenameUtils;
@@ -34,13 +38,23 @@ import org.apache.commons.io.FilenameUtils;
  */
 public class FileLogic implements Serializable {
 
-    private final ContentView view;
+    private ContentView viewFiles;
+    private Favourites viewFavourites;
+    private Bin viewBin;
 
     private final Notifications notification = new Notifications();
     private final ProgressBar progressBar = new ProgressBar(0.0f);
 
     public FileLogic(ContentView view) {
-        this.view = view;
+        this.viewFiles = view;
+    }
+    
+    public FileLogic(Favourites view) {
+        this.viewFavourites = view;
+    }
+    
+    public FileLogic(Bin view) {
+        this.viewBin = view;
     }
     
     public void downloadFile(Item file, Button dwnldInvisibleBtn) {
@@ -84,8 +98,38 @@ public class FileLogic implements Serializable {
             notification.createFailure("Problemas al copiar el archivo");
         }
     }
-
+    
+    public void favouriteFile(Path sourceDir, Item file) {
+        try {
+            Path targetDir = Paths.get(Constantes.FAVOURITES.concat("\\").concat(file.getName()));
+            Files.copy(sourceDir, targetDir);
+            // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
+            String dir = sourceDir.getParent().toString();
+            cleanAndDisplay(new Item(dir));
+            notification.createSuccess("Se agrego el archivo a favoritos: " + file.getName());
+        } catch (FileAlreadyExistsException ex) {
+            notification.createFailure("Ya existe un archivo con el mismo nombre en esta carpeta");
+        } catch (IOException ex) {
+            notification.createFailure("Problemas al agregar a favoritos el archivo");
+        }
+    }
+    
     public void deleteFile(Path sourceDir, Item file) {
+        try {
+            Path targetDir = Paths.get(Constantes.BIN.concat("\\").concat(file.getName()));
+            Files.move(sourceDir, targetDir);
+            // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
+            String dir = sourceDir.getParent().toString();
+            cleanAndDisplay(new Item(dir));
+            notification.createSuccess("Se eliminó el archivo correctamente: " + file.getName());
+        } catch (FileAlreadyExistsException ex) {
+            emptyBinFile(sourceDir, file);  //SI EXISTE UNA ARCHIVO CON EL MISMO NOMBRE EN LA PAPELERA SE ELIMNA PERMANENTEMENTE
+        } catch (IOException ex) {
+            notification.createFailure("No se elimino el archivo");
+        }
+    }
+
+    public void emptyBinFile(Path sourceDir, Item file) {
         try {
             Files.delete(sourceDir);
             // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
@@ -240,7 +284,7 @@ public class FileLogic implements Serializable {
 
     public void cleanAndDisplay(Item file) {
         // SE RECARGA LA PAGINA, PARA MOSTRAR EL ARCHIVO CARGADO
-        this.view.cleanAndDisplay(file);
+        this.viewFiles.cleanAndDisplay(file);
     }
 
 }
