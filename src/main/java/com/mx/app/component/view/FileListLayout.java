@@ -5,32 +5,13 @@
  */
 package com.mx.app.component.view;
 
-import com.google.common.eventbus.Subscribe;
 import com.mx.app.component.BoxTable;
-import com.mx.app.component.ButtonContextMenu;
 import com.mx.app.data.Item;
-import com.mx.app.event.AppEvent.BrowserResizeEvent;
 import com.mx.app.event.AppEventBus;
-import com.mx.app.logic.DirectoryLogic;
-import com.mx.app.logic.FileLogic;
-import com.mx.app.utils.Components;
-import com.mx.app.utils.ItemProperty;
-import com.vaadin.data.provider.DataProvider;
-import com.vaadin.data.provider.ListDataProvider;
+import com.mx.app.logic.*;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.Page;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.Column;
-import com.vaadin.ui.Grid.ItemClick;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.renderers.ComponentRenderer;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import com.vaadin.ui.*;
 
 /**
  *

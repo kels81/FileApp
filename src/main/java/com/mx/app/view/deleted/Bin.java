@@ -2,13 +2,13 @@ package com.mx.app.view.deleted;
 
 import com.mx.app.component.view.*;
 import com.mx.app.data.Item;
+import com.mx.app.event.AppEventBus;
 import com.mx.app.logic.*;
 import com.mx.app.utils.*;
 import com.vaadin.navigator.*;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.*;
 import com.vaadin.ui.*;
-import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 public final class Bin extends VerticalLayout implements View {
@@ -29,7 +29,7 @@ public final class Bin extends VerticalLayout implements View {
 
     public Bin() {
         this.origenPath = new Item(Constantes.BIN);
-        
+
         setSizeFull();
         addStyleName("content");
         setMargin(false);
@@ -37,17 +37,32 @@ public final class Bin extends VerticalLayout implements View {
 
         addComponent(buildHeader(origenPath));
 
-        directoryContent = selectView(selected, origenPath);
-        addComponent(directoryContent);
-        setExpandRatio(directoryContent, 1);
+        if (origenPath.isEmpty()) {
+            Label message = component.createLabelEmptyDirectory();
+            addComponent(message);
+            setComponentAlignment(message, Alignment.MIDDLE_CENTER);
+            setExpandRatio(message, 1);
+        } else {
+            directoryContent = selectView(selected, origenPath);
+            addComponent(directoryContent);
+            setExpandRatio(directoryContent, 1);
+        }
 
         Responsive.makeResponsive(this);
 
     }
+    
+    @Override
+    public void detach() {
+        super.detach();
+        // A new instance of TransactionsView is created every time it's
+        // navigated to so we'll need to clean up references to it on detach.
+        AppEventBus.unregister(this);
+    }
 
     private Component buildHeader(Item directory) {
         HorizontalLayout header = new HorizontalLayout();
-         header.setWidth(100.0f, Sizeable.Unit.PERCENTAGE);
+        header.setWidth(100.0f, Sizeable.Unit.PERCENTAGE);
         header.addStyleName("viewheader");
         Responsive.makeResponsive(header);
 
@@ -59,7 +74,7 @@ public final class Bin extends VerticalLayout implements View {
 
         return header;
     }
-    
+
     private Component buildViewsButtons(Item directory) {
         viewBar = new HorizontalLayout();
         viewBar.addStyleName("viewbar");
@@ -117,7 +132,6 @@ public final class Bin extends VerticalLayout implements View {
         addComponent(directoryContent);
         setExpandRatio(directoryContent, 1);
     }
-
 
     @Override
     public void enter(final ViewChangeEvent event) {

@@ -5,6 +5,8 @@
  */
 package com.mx.app.utils;
 
+import com.vaadin.server.FontAwesome;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -14,7 +16,6 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class Components {
 
-
     public Button createButtonPrimary(String caption) {
         Button btn = new Button(caption);
         btn.addStyleName(ValoTheme.BUTTON_SMALL);
@@ -22,7 +23,7 @@ public class Components {
         //btn.setEnabled(false);
         return btn;
     }
-    
+
     public Button createButtonIconTiny() {
         Button btn = new Button();
         btn.addStyleName(ValoTheme.BUTTON_TINY);
@@ -30,7 +31,7 @@ public class Components {
         //btn.setEnabled(false);
         return btn;
     }
-    
+
     public Button createButtonNormal(String caption) {
         Button btn = new Button(caption);
         btn.addStyleName(ValoTheme.BUTTON_SMALL);
@@ -44,13 +45,19 @@ public class Components {
         btn.setStyleName("btnPath");
         return btn;
     }
-    
+
+    public Label createLabelArrow() {
+        Label lbl = new Label(FontAwesome.ANGLE_RIGHT.getHtml(), ContentMode.HTML);
+        lbl.addStyleName(ValoTheme.LABEL_COLORED);
+        return lbl;
+    }
+
     public MenuBar createMenuButtonPath() {
         MenuBar menubtn = new MenuBar();
         menubtn.setStyleName(ValoTheme.MENUBAR_BORDERLESS);
         return menubtn;
     }
-    
+
     public Label createLabelHeader(String caption) {
         Label lbl = new Label(caption);
         lbl.setSizeUndefined();
@@ -59,5 +66,28 @@ public class Components {
         return lbl;
     }
     
+    public Label createLabelEmptyBin() {
+        Label lbl = new Label("Papelera vacía");
+        lbl.setSizeUndefined();
+        lbl.addStyleName(ValoTheme.LABEL_LIGHT);
+        return lbl;
+    }
+    
+    public Label createLabelEmptyDirectory() {
+        Label lbl = new Label("La carpeta no contiene items");
+        lbl.setSizeUndefined();
+        lbl.addStyleName(ValoTheme.LABEL_LIGHT);
+        return lbl;
+    }
+    
+    public TextField createTextSmall(String caption, String value) {
+        TextField txt = new TextField(caption);
+        txt.addStyleName(ValoTheme.TEXTFIELD_SMALL);
+        txt.setWidth("260px");
+        txt.setValue(value);
+        return txt;
+                
+        
+    }
 
 }

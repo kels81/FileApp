@@ -56,6 +56,11 @@ public class Item {
     public boolean isFile() {
         return file.isFile();
     }
+    
+    public boolean isEmpty() {
+        boolean empty = file.listFiles().length == 0;
+        return empty;
+    }
 
     public long length() {
         return file.length();
@@ -64,7 +69,6 @@ public class Item {
     public String[] list() {
         return file.list();
     }
-    
     
     public boolean renameTo(Item destino) {
         return file.renameTo(new File(destino.getPath()));

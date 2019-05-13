@@ -9,9 +9,9 @@ import com.vaadin.server.*;
 
 public enum AppViewType {
     ALL_FILES("archivos", ContentView.class, FontAwesome.CLOUD, false),
-    FAVOURITES("favoritos", Favourites.class, FontAwesome.STAR, true),
-    BIN("eliminados", Bin.class, FontAwesome.TRASH, true),
-    SETTINGS("configuracion", Settings.class, FontAwesome.GEAR, false);
+    FAVOURITES("favoritos", Favourites.class, FontAwesome.STAR, false),
+    BIN("eliminados", Bin.class, FontAwesome.TRASH, false),
+    SETTINGS("configuracion", Settings.class, FontAwesome.GEAR, true);
 
     private final String viewName;
     private final Class<? extends View> viewClass;

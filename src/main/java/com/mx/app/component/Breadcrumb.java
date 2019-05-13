@@ -18,41 +18,56 @@ import java.util.*;
  *
  * @author ecortesh
  */
-public class Breadcrumb extends HorizontalLayout {
+public final class Breadcrumb extends HorizontalLayout {
 
     private Button btnPath;
+    private MenuBar btnDirectories;
     private Label lblArrow;
     private final AppCleanAndDisplay appCleanDisplay;
 
     private final Components component = new Components();
 
-    //private final DirectoryLogic viewLogicDirectory;
-//    public Breadcrumb(DirectoryLogic breadcrumbDirectoryLogic, Item itemDir) {
     public Breadcrumb(Item itemDir, AppCleanAndDisplay cleanDisplay) {
-        //this.viewLogicDirectory = breadcrumbDirectoryLogic;
         this.appCleanDisplay = cleanDisplay;
 
         List<Item> listDirectories = getListDirectories(itemDir);
-        int i = 1;
-        for (Item directory : listDirectories) {
-            btnPath = component.createButtonPath(directory.getName());
-            btnPath.setEnabled((i != listDirectories.size()));
-            btnPath.addStyleName((i == listDirectories.size() ? "labelColored" : ""));
-            btnPath.addClickListener((event) -> showContentDirectory(directory));
 
-            Component menuButton = createMenuButton(itemDir);
-            addComponent(menuButton);
-            
+        if (listDirectories.size() > 3) {
+            createShortWay(listDirectories);
+        } else {
+            createNormalWay(listDirectories);
+        }
+
+    }
+
+    private void createNormalWay(List<Item> listDirectories) {
+        int size = listDirectories.size();
+        int count = 1;
+        for (Item directory : listDirectories) {
+            btnPath = createButtonPath(directory, size, count);
             addComponent(btnPath);
-            if (i != listDirectories.size()) {
-                lblArrow = new Label(FontAwesome.ANGLE_RIGHT.getHtml(), ContentMode.HTML);
-                lblArrow.addStyleName(ValoTheme.LABEL_COLORED);
+
+            if (count != size) {
+                lblArrow = component.createLabelArrow();
+
                 addComponent(lblArrow);
                 setComponentAlignment(lblArrow, Alignment.MIDDLE_CENTER);
             }
-            i++;
+            count++;
         }
+    }
 
+    private void createShortWay(List<Item> listDirectories) {
+        int lstSize = listDirectories.size();
+        btnDirectories = createMenuButton(listDirectories);
+        addComponent(btnDirectories);
+
+        lblArrow = component.createLabelArrow();
+        addComponent(lblArrow);
+        setComponentAlignment(lblArrow, Alignment.MIDDLE_CENTER);
+
+        btnPath = createButtonPath(listDirectories.get(lstSize - 1), lstSize, lstSize);
+        addComponent(btnPath);
     }
 
     private List<Item> getListDirectories(Item directory) {
@@ -76,22 +91,30 @@ public class Breadcrumb extends HorizontalLayout {
         return listDirectories;
     }
 
-    private void showContentDirectory(Item directory) {
-        //viewLogicDirectory.cleanAndDisplay(directory);
-        appCleanDisplay.showContentDirectory(directory);
+    public Button createButtonPath(Item itemDir, int listDirectoriesSize, int count) {
+        Button btn = component.createButtonPath(itemDir.getName());
+        btn.setEnabled((count != listDirectoriesSize));     //PARA QUE NO TENGA CLICK  EL BUTTON
+        btn.addStyleName((count == listDirectoriesSize ? "labelColored" : ""));
+        btn.addClickListener((event) -> showContentDirectory(itemDir));
+
+        return btn;
     }
 
-    private Component createMenuButton(Item itemDir) {
+    //private MenuBar createMenuButton(Item itemDir) {
+    private MenuBar createMenuButton(List<Item> listDirectories) {
         MenuBar menuBtn = component.createMenuButtonPath();
         MenuBar.MenuItem dropdown = menuBtn.addItem("", FontAwesome.FOLDER_O, null);
-        
-        List<Item> listDirectories = getListDirectories(itemDir);
+
         listDirectories = listDirectories.subList(0, (listDirectories.size() - 1));
-        
+
         for (Item directory : listDirectories) {
-            dropdown.addItem(directory.getName(), null);
+            dropdown.addItem(directory.getName(), (event) -> showContentDirectory(directory));
         }
 
         return menuBtn;
+    }
+
+    private void showContentDirectory(Item directory) {
+        appCleanDisplay.showContentDirectory(directory);
     }
 }

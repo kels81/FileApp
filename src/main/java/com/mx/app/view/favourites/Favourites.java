@@ -54,7 +54,7 @@ public final class Favourites extends VerticalLayout implements View {
         header.addStyleName("viewheader");
         Responsive.makeResponsive(header);
 
-        Label title = component.createLabelHeader("Eliminados");
+        Label title = component.createLabelHeader("Favoritos");
         Component typesViews = buildViewsButtons(directory);
 
         header.addComponents(title, typesViews);

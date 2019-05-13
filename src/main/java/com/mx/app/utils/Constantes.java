@@ -12,7 +12,7 @@ package com.mx.app.utils;
 public class Constantes {
 
     //CARPETA DE ARCHIVOS PC
-    public static final String ROOT_PATH = "C:\\Users\\ecortesh\\Documents\\GitHub\\FileApp";
+    public static final String ROOT_PATH = "C:\\Users\\ecortesh\\Documents\\GitHub\\FileApp";       //CARPETA PROYECTO CONTENEDORA
     public static final String ALL_FILES = ROOT_PATH.concat("\\Archivos");
     public static final String FAVOURITES = ROOT_PATH.concat("\\Favoritos");
     public static final String BIN = ROOT_PATH.concat("\\Papelera");

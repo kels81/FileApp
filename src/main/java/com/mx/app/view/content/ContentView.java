@@ -1,6 +1,6 @@
 package com.mx.app.view.content;
 
-import com.mx.app.component.Breadcrumb;
+import com.mx.app.component.*;
 import com.mx.app.component.view.*;
 import com.mx.app.data.Item;
 import com.mx.app.logic.*;
@@ -36,11 +36,7 @@ public final class ContentView extends VerticalLayout implements View {
         setMargin(false);
         setSpacing(false);
 
-        addComponent(buildHeader(origenPath));
-
-        directoryContent = selectView(selected, origenPath);
-        addComponent(directoryContent);
-        setExpandRatio(directoryContent, 1);
+        cleanAndDisplay(origenPath);
 
         Responsive.makeResponsive(this);
 //        Page.getCurrent().getStyles().add(".v-verticallayout {border: 1px solid blue;} .v-verticallayout .v-slot {border: 1px solid red;}");
@@ -104,11 +100,15 @@ public final class ContentView extends VerticalLayout implements View {
 
     private Component selectView(Boolean selected, Item pathDirectory) {
         Component viewSelected;
+//        if (!pathDirectory.isEmpty()) {
         if (selected) {
             viewSelected = new FileMosaicoLayout(viewLogicFile, viewLogicDirectory, pathDirectory);
         } else {
             viewSelected = new FileListLayout(viewLogicFile, viewLogicDirectory, pathDirectory);
         }
+//        } else {
+//            viewSelected = component.createLabelEmptyDirectory();
+//        }
 
         return viewSelected;
     }
@@ -116,9 +116,15 @@ public final class ContentView extends VerticalLayout implements View {
     public void cleanAndDisplay(Item directory) {
         removeAllComponents();
         addComponent(buildHeader(directory));
-        directoryContent = selectView(selected, directory);
-        addComponent(directoryContent);
-        setExpandRatio(directoryContent, 1);
+        if (directory.isEmpty()) {
+            Label message = component.createLabelEmptyDirectory();
+            addComponent(message);
+            setComponentAlignment(message, Alignment.MIDDLE_CENTER);
+            setExpandRatio(message, 1);
+        } else {
+            directoryContent = selectView(selected, directory);
+            addComponentsAndExpand(directoryContent);
+        }
     }
 
 //    private String setStyle(Boolean selected) {
