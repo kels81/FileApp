@@ -52,14 +52,6 @@ public final class Bin extends VerticalLayout implements View {
 
     }
     
-    @Override
-    public void detach() {
-        super.detach();
-        // A new instance of TransactionsView is created every time it's
-        // navigated to so we'll need to clean up references to it on detach.
-        AppEventBus.unregister(this);
-    }
-
     private Component buildHeader(Item directory) {
         HorizontalLayout header = new HorizontalLayout();
         header.setWidth(100.0f, Sizeable.Unit.PERCENTAGE);
