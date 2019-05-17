@@ -24,7 +24,7 @@ public class FileMosaicoLayout extends CssLayout {
 //    private Item file;
 
     private final Button downloadInvisibleButton = new Button();
-    private final Components component = new Components();
+//    private final Components component = new Components();
 
     private final FileLogic viewLogicFile;
     private final DirectoryLogic viewLogicDirectory;

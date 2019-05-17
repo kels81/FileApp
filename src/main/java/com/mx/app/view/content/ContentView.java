@@ -11,7 +11,10 @@ import com.vaadin.server.*;
 import com.vaadin.ui.*;
 
 @SuppressWarnings("serial")
+//public final class ContentView extends CssLayout implements View {
 public final class ContentView extends VerticalLayout implements View {
+    
+    public static final String VIEW_NAME = "archivos";
 
     private final Item origenPath;
     private HorizontalLayout header;
@@ -21,12 +24,13 @@ public final class ContentView extends VerticalLayout implements View {
     private Button btnListView;
     private Button btnGridView;
 
-    private final Components component = new Components();
     private final DirectoryLogic viewLogicDirectory = new DirectoryLogic(this);
     private final FileLogic viewLogicFile = new FileLogic(this);
 
     private Boolean selected = true;
     private Boolean isVisible = true;
+
+    private UploadLayout sideBar;
 
     public ContentView() {
         this.origenPath = new Item(Constantes.ALL_FILES);
@@ -64,9 +68,14 @@ public final class ContentView extends VerticalLayout implements View {
         viewBar.addStyleName("viewbar");
         viewBar.setWidth(100.0f, Sizeable.Unit.PERCENTAGE);
 
+//        Button btn = new Button("Show");
+//        btn.addClickListener((event) -> {
+//            showSideBar(true);
+//        });
+
         HorizontalLayout viewsButtons = new HorizontalLayout();
 
-        btnListView = component.createButtonIconTiny();
+        btnListView = Components.createButtonIconTiny();
         btnListView.setIcon(FontAwesome.BARS);
         //btnListView.addStyleName(setStyle(selected));
         //btnListView.setEnabled(selected);
@@ -78,7 +87,7 @@ public final class ContentView extends VerticalLayout implements View {
             cleanAndDisplay(directory);
         });
 
-        btnGridView = component.createButtonIconTiny();
+        btnGridView = Components.createButtonIconTiny();
         btnGridView.setIcon(FontAwesome.TH_LARGE);
         //btnGridView.addStyleName(setStyle(!selected));
         //btnGridView.setEnabled(!selected);
@@ -92,7 +101,7 @@ public final class ContentView extends VerticalLayout implements View {
 
         viewsButtons.addComponents(btnListView, btnGridView);
 
-        viewBar.addComponent(viewsButtons);
+        viewBar.addComponents(viewsButtons);
         viewBar.setComponentAlignment(viewsButtons, Alignment.MIDDLE_RIGHT);
 
         return viewBar;
@@ -100,32 +109,67 @@ public final class ContentView extends VerticalLayout implements View {
 
     private Component selectView(Boolean selected, Item pathDirectory) {
         Component viewSelected;
-//        if (!pathDirectory.isEmpty()) {
         if (selected) {
             viewSelected = new FileMosaicoLayout(viewLogicFile, viewLogicDirectory, pathDirectory);
         } else {
             viewSelected = new FileListLayout(viewLogicFile, viewLogicDirectory, pathDirectory);
         }
-//        } else {
-//            viewSelected = component.createLabelEmptyDirectory();
-//        }
 
         return viewSelected;
     }
 
+//    private Component sideBar() {
+//        sideBar = new UploadLayout(this::showSideBar);
+////        sideBar.addStyleName("visible");
+////        sideBar.setEnabled(true);
+//
+//        return sideBar;
+//    }
+
     public void cleanAndDisplay(Item directory) {
         removeAllComponents();
         addComponent(buildHeader(directory));
+//        addComponent(sideBar());
         if (directory.isEmpty()) {
-            Label message = component.createLabelEmptyDirectory();
+            Label message = Components.createLabelEmptyDirectory();
             addComponent(message);
             setComponentAlignment(message, Alignment.MIDDLE_CENTER);
             setExpandRatio(message, 1);
         } else {
             directoryContent = selectView(selected, directory);
             addComponentsAndExpand(directoryContent);
+//            addComponent(directoryContent);
+        }
+        //setFragmentParameter(directory.getName());
+    }
+
+    public void showSideBar(boolean show) {
+        if (show) {
+            sideBar.addStyleName("visible");
+            sideBar.setEnabled(true);
+        } else {
+            sideBar.removeStyleName("visible");
+            sideBar.setEnabled(false);
         }
     }
+    
+    /**
+     * Update the fragment without causing navigator to change view
+     */
+//    private void setFragmentParameter(String directoryName) {
+//        String fragmentParameter;
+//        if (directoryName == null || directoryName.isEmpty()) {
+//            fragmentParameter = "";
+//        } else {
+//            fragmentParameter = directoryName;
+//        }
+//
+//        System.out.println("fragmentParameter = " + Page.getCurrent().getUriFragment());
+//        Page page = Page.getCurrent();
+//        page.setUriFragment(
+//                "!" + ContentView.VIEW_NAME + "/" + fragmentParameter,
+//                false);
+//    }
 
 //    private String setStyle(Boolean selected) {
 //        return selected ? "borderButton" : "noBorderButton";

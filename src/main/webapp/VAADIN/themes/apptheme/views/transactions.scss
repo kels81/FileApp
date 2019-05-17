@@ -1,10 +1,19 @@
 @mixin app-transactions-view {
 
-  .transactions {
-    .viewheader {
-      padding: $view-padding;
-      border-bottom: valo-border($strength: 0.5);
+    .transactions {
+
+        .viewheader {
+            padding: $view-padding;
+            border-bottom: valo-border($strength: 0.5);
+        }
+
+        .form-settings {
+            padding-bottom: $view-padding;
+            padding-left: $view-padding;
+            padding-right: $view-padding;
+            padding-top:  $view-padding / 2;
+        }
+
     }
-  }
 
 }

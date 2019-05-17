@@ -7,15 +7,10 @@ package com.mx.app.component;
 
 import com.mx.app.data.Item;
 import com.mx.app.logic.*;
-import com.mx.app.utils.FileFormats;
+import com.mx.app.utils.ItemProperty;
 import com.vaadin.event.LayoutEvents;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import java.io.File;
-import java.util.*;
-import org.apache.commons.io.*;
-import org.apache.commons.lang.ArrayUtils;
 
 /**
  *
@@ -25,12 +20,9 @@ public class BoxFrame extends CssLayout {
 
     private HorizontalLayout boxFrame;
     private HorizontalLayout mosaicoLayout;
-    private ThemeResource iconResource;
-    private Image icon;
     private VerticalLayout fileDetails;
-    private Label lblName;
     private Label lblNumberOfElementsAndFileSize;
-    
+
     private final Item file;
     private final FileLogic viewLogicFile;
     private final DirectoryLogic viewLogicDirectory;
@@ -59,7 +51,7 @@ public class BoxFrame extends CssLayout {
                 if (file.isDirectory()) {
                     viewLogicDirectory.cleanAndDisplay(file);
                 } else if (file.isFile()) {
-                    Notification.show("Ver archivo: " + file.getName()); 
+                    Notification.show("Ver archivo: " + file.getName());
 //                        Window w = new ViewerWindow(file_);
 //                        UI.getCurrent().addWindow(w);
 //                        w.focus();
@@ -77,7 +69,7 @@ public class BoxFrame extends CssLayout {
     }
 
     private HorizontalLayout buildBoxContent() {
-        Component icon = buildIcon();
+        Component icon = new ItemProperty(file).buildIcon(true);
         Component details = buildFileDetails();
 
         mosaicoLayout = new HorizontalLayout();
@@ -92,45 +84,9 @@ public class BoxFrame extends CssLayout {
         return mosaicoLayout;
     }
 
-    private Image buildIcon() {
-        icon = new Image(null, getIconExtension());
-        icon.setWidth((file.isDirectory() ? 43.0f : 40.0f), Unit.PIXELS);
-        icon.setHeight((file.isDirectory() ? 43.0f : 49.0f), Unit.PIXELS);
-        return icon;
-    }
-
-    private ThemeResource getIconExtension() {
-        String extension = FilenameUtils.getExtension(file.getPath()).toLowerCase();
-        if (file.isDirectory()) {
-            iconResource = new ThemeResource("img/file_manager/folder_" + (file.list().length == 0 ? "empty" : "full") + ".png");
-        } else {
-            //documento
-            iconResource = findExtension(extension);
-        }
-        return iconResource;
-    }
-
-    private ThemeResource findExtension(String extension) {
-        String formato = "desconocido";
-
-        List<String[]> allFileFormats = new ArrayList<>();
-        for (FileFormats fileFormats : FileFormats.values()) {
-            allFileFormats.add(fileFormats.getArrayFileFormats());
-        }
-
-        for (String[] array : allFileFormats) {
-            if (ArrayUtils.contains(array, extension)) {
-                formato = FileFormats.values()[allFileFormats.indexOf(array)].toString().toLowerCase();
-                break;
-            }
-        }
-
-        return new ThemeResource("img/file_manager/" + formato + ".png");
-    }
-
     private VerticalLayout buildFileDetails() {
-        Component fileName = getFileName();
-        Component numberOfElements = getNumberOfElementsAndFileSize();
+        Component fileName = new ItemProperty(file).getFileName();
+        Component numberOfElements = new ItemProperty(file).getLabelNumberOfElementsAndFileSize();
 
         fileDetails = new VerticalLayout();
         fileDetails.setMargin(false);
@@ -138,36 +94,8 @@ public class BoxFrame extends CssLayout {
         fileDetails.addComponents(fileName, numberOfElements);
         fileDetails.setComponentAlignment(fileName, Alignment.BOTTOM_LEFT);
         fileDetails.setComponentAlignment(numberOfElements, Alignment.BOTTOM_LEFT);
-        
+
         return fileDetails;
-    }
-
-    private Label getFileName() {
-        lblName = new Label(file.getName());
-        lblName.setSizeFull();
-        lblName.addStyleName("labelName");
-        lblName.addStyleName("noselect");
-        lblName.addStyleName(ValoTheme.LABEL_BOLD);
-        
-        return lblName;
-    }
-
-    private Label getNumberOfElementsAndFileSize() {
-        long fileSize = file.length();
-        String fileSizeDisplay = FileUtils.byteCountToDisplaySize(fileSize);
-        String label = (file.isDirectory()
-                ? String.valueOf(file.list().length == 0
-                        ? "" : file.list().length) + (file.list().length > 1
-                ? " elementos" : file.list().length == 0
-                ? "vacío" : " elemento")
-                : fileSizeDisplay);
-
-        lblNumberOfElementsAndFileSize = new Label(label);
-        lblNumberOfElementsAndFileSize.addStyleName("labelInfo");
-        lblNumberOfElementsAndFileSize.addStyleName("noselect");
-        lblNumberOfElementsAndFileSize.addStyleName(ValoTheme.LABEL_TINY);
-       
-        return lblNumberOfElementsAndFileSize;
     }
 
 }

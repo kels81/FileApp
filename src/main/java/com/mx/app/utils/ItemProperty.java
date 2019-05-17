@@ -8,6 +8,7 @@ package com.mx.app.utils;
 import com.mx.app.data.Item;
 import com.vaadin.server.*;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.*;
@@ -39,13 +40,15 @@ public class ItemProperty {
         return icon;
     }
 
-//    public Label getFileName() {
-//        Label lblName = new Label(file.getName());
-//        lblName.setSizeFull();
-//        lblName.addStyleName("labelName");
-////        lblName.addStyleName("noselect");
-//        return lblName;
-//    }
+    public Label getFileName() {
+        Label lblName = new Label(file.getName());
+        lblName.setSizeFull();
+        lblName.addStyleName("labelName");
+        lblName.addStyleName("noselect");
+        lblName.addStyleName(ValoTheme.LABEL_BOLD);
+        
+        return lblName;
+    }
 
     public String getNumberOfElementsAndFileSize() {
         long fileSize = file.length();
@@ -57,6 +60,16 @@ public class ItemProperty {
                 ? "vacío" : " elemento")
                 : fileSizeDisplay);
         return elementos;
+    }
+    
+    public Label getLabelNumberOfElementsAndFileSize() {
+        String label = getNumberOfElementsAndFileSize();
+        Label lblNumberOfElementsAndFileSize = new Label(label);
+        lblNumberOfElementsAndFileSize.addStyleName("labelInfo");
+        lblNumberOfElementsAndFileSize.addStyleName("noselect");
+        lblNumberOfElementsAndFileSize.addStyleName(ValoTheme.LABEL_TINY);
+
+        return lblNumberOfElementsAndFileSize;
     }
 
     public String getAtributos() {
@@ -72,13 +85,13 @@ public class ItemProperty {
     }
     
     private ThemeResource getIconExtension() {
-        String extension = FilenameUtils.getExtension(file.getPath()).toLowerCase();
+//        String extension = FilenameUtils.getExtension(file.getPath()).toLowerCase();
         if (file.isDirectory()) {
             iconResource = new ThemeResource("img/file_manager/folder_" + (file.list().length == 0 ? "empty" : "full") + ".png");
         } else {
             //documento
             //iconResource = new ThemeResource("img/file_manager/" + extension + ".png");
-            iconResource = findExtension(extension);
+            iconResource = findExtension(file.getExtension());
         }
         return iconResource;
     }

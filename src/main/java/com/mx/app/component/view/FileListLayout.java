@@ -17,7 +17,8 @@ import com.vaadin.ui.*;
  *
  * @author Edrd
  */
-public class FileListLayout extends VerticalLayout implements View {
+//public class FileListLayout extends VerticalLayout implements View {
+public class FileListLayout extends CssLayout {
 
 //    private final Components component = new Components();
 
@@ -44,7 +45,8 @@ public class FileListLayout extends VerticalLayout implements View {
 
 //        table = buildTable(file);
         BoxTable table = new BoxTable(file, viewLogicFile, viewLogicDirectory, downloadInvisibleButton);
-        addComponentsAndExpand(table);
+//        addComponentsAndExpand(table);
+        addComponent(table);
 //        browserResized();
 //        System.out.println("width-->" + Page.getCurrent().getBrowserWindowWidth());
 //        System.out.println("height-->" + Page.getCurrent().getBrowserWindowHeight());
@@ -179,8 +181,8 @@ public class FileListLayout extends VerticalLayout implements View {
 ////        }
 //    }
 
-    @Override
-    public void enter(final ViewChangeListener.ViewChangeEvent event) {
-    }
+//    @Override
+//    public void enter(final ViewChangeListener.ViewChangeEvent event) {
+//    }
 
 }

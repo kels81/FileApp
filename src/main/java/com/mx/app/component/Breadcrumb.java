@@ -8,10 +8,9 @@ package com.mx.app.component;
 import com.mx.app.data.Item;
 import com.mx.app.event.AppCleanAndDisplay;
 import com.mx.app.utils.*;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.*;
-import com.vaadin.ui.themes.ValoTheme;
 import java.util.*;
 
 /**
@@ -25,14 +24,12 @@ public final class Breadcrumb extends HorizontalLayout {
     private Label lblArrow;
     private final AppCleanAndDisplay appCleanDisplay;
 
-    private final Components component = new Components();
-
     public Breadcrumb(Item itemDir, AppCleanAndDisplay cleanDisplay) {
         this.appCleanDisplay = cleanDisplay;
 
         List<Item> listDirectories = getListDirectories(itemDir);
 
-        if (listDirectories.size() > 3) {
+        if (listDirectories.size() > 1) {
             createShortWay(listDirectories);
         } else {
             createNormalWay(listDirectories);
@@ -48,7 +45,7 @@ public final class Breadcrumb extends HorizontalLayout {
             addComponent(btnPath);
 
             if (count != size) {
-                lblArrow = component.createLabelArrow();
+                lblArrow = Components.createLabelArrow();
 
                 addComponent(lblArrow);
                 setComponentAlignment(lblArrow, Alignment.MIDDLE_CENTER);
@@ -62,7 +59,7 @@ public final class Breadcrumb extends HorizontalLayout {
         btnDirectories = createMenuButton(listDirectories);
         addComponent(btnDirectories);
 
-        lblArrow = component.createLabelArrow();
+        lblArrow = Components.createLabelArrow();
         addComponent(lblArrow);
         setComponentAlignment(lblArrow, Alignment.MIDDLE_CENTER);
 
@@ -92,7 +89,7 @@ public final class Breadcrumb extends HorizontalLayout {
     }
 
     public Button createButtonPath(Item itemDir, int listDirectoriesSize, int count) {
-        Button btn = component.createButtonPath(itemDir.getName());
+        Button btn = Components.createButtonPath(itemDir.getName());
         btn.setEnabled((count != listDirectoriesSize));     //PARA QUE NO TENGA CLICK  EL BUTTON
         btn.addStyleName((count == listDirectoriesSize ? "labelColored" : ""));
         btn.addClickListener((event) -> showContentDirectory(itemDir));
@@ -100,10 +97,10 @@ public final class Breadcrumb extends HorizontalLayout {
         return btn;
     }
 
-    //private MenuBar createMenuButton(Item itemDir) {
     private MenuBar createMenuButton(List<Item> listDirectories) {
-        MenuBar menuBtn = component.createMenuButtonPath();
-        MenuBar.MenuItem dropdown = menuBtn.addItem("", FontAwesome.FOLDER_O, null);
+        MenuBar menuBtn = Components.createMenuButtonPath();
+//        MenuBar.MenuItem dropdown = menuBtn.addItem("", FontAwesome.FOLDER_O, null);
+        MenuBar.MenuItem dropdown = menuBtn.addItem("", VaadinIcons.FOLDER_O, null);
 
         listDirectories = listDirectories.subList(0, (listDirectories.size() - 1));
 

@@ -24,7 +24,7 @@ import java.util.*;
  *
  * @author ecortesh
  */
-public class BoxTable extends Grid<Item> implements View{
+public class BoxTable extends Grid<Item> {
 
     private final Item file;
     private final Button downloadInvisibleButton;
@@ -65,7 +65,7 @@ public class BoxTable extends Grid<Item> implements View{
 //                Item file_ = new Item(itemId);
                 if (event.getMouseEventDetails().isDoubleClick()) {
                     if (itemId.isDirectory()) {
-                        viewLogicFile.cleanAndDisplay(itemId);
+                        viewLogicDirectory.cleanAndDisplay(itemId);
                     } else if (itemId.isFile()) {
                         Notification.show("Ver archivo: " + itemId.getName());
 //                        Window w = new ViewerWindow(file);;
@@ -94,7 +94,8 @@ public class BoxTable extends Grid<Item> implements View{
         COLLAPSIBLE_COLUMNS
                 .add(addColumn(file -> file.getName())
                         .setCaption("Nombre")
-                        .setExpandRatio(6));
+                        //.setExpandRatio(6)
+                );
 //                .add(addColumn(file_ -> new Label(file_.getName()), new ComponentRenderer()).setCaption("Nombre"));     // OTRA OPCION
 //                .add(addColumn(File::getName).setCaption("Nombre"));                                                                                    // OTRA OPCION
         COLLAPSIBLE_COLUMNS
@@ -102,12 +103,13 @@ public class BoxTable extends Grid<Item> implements View{
                 .add(addColumn(file -> new ItemProperty(file).getNumberOfElementsAndFileSize())
                         .setCaption("Tamaño")
                         .setId(COL_TAMANIO)
-                        .setExpandRatio(2));
+                        //.setExpandRatio(2)
+                );
         COLLAPSIBLE_COLUMNS
                 .add(addColumn(file -> new ItemProperty(file).getAtributos())
                         .setCaption("Modificado")
                         .setId(COL_MODIFICADO)
-                        .setExpandRatio(2)
+                        //.setExpandRatio(2)
                         .setStyleGenerator(item -> "v-align-right"));
         COLLAPSIBLE_COLUMNS // BUTTONCONTEXTMENU
                 .add(addColumn(file -> new ButtonContextMenu(downloadInvisibleButton, file, viewLogicFile, viewLogicDirectory), new ComponentRenderer())

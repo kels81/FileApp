@@ -23,7 +23,6 @@ public final class Favourites extends VerticalLayout implements View {
     private Button btnListView;
     private Button btnGridView;
 
-    private final Components component = new Components();
     private final DirectoryLogic viewLogicDirectory = new DirectoryLogic(this);
     private final FileLogic viewLogicFile = new FileLogic(this);
 
@@ -54,7 +53,7 @@ public final class Favourites extends VerticalLayout implements View {
         header.addStyleName("viewheader");
         Responsive.makeResponsive(header);
 
-        Label title = component.createLabelHeader("Favoritos");
+        Label title = Components.createLabelHeader("Favoritos");
         Component typesViews = buildViewsButtons(directory);
 
         header.addComponents(title, typesViews);
@@ -70,7 +69,7 @@ public final class Favourites extends VerticalLayout implements View {
 
         HorizontalLayout viewsButtons = new HorizontalLayout();
 
-        btnListView = component.createButtonIconTiny();
+        btnListView = Components.createButtonIconTiny();
         btnListView.setIcon(FontAwesome.BARS);
         //btnListView.addStyleName(setStyle(selected));
         //btnListView.setEnabled(selected);
@@ -82,7 +81,7 @@ public final class Favourites extends VerticalLayout implements View {
             cleanAndDisplay(directory);
         });
 
-        btnGridView = component.createButtonIconTiny();
+        btnGridView = Components.createButtonIconTiny();
         btnGridView.setIcon(FontAwesome.TH_LARGE);
         //btnGridView.addStyleName(setStyle(!selected));
         //btnGridView.setEnabled(!selected);

@@ -9,14 +9,11 @@ import com.mx.app.component.Breadcrumb;
 import com.mx.app.data.Item;
 import com.mx.app.logic.*;
 import com.mx.app.utils.*;
-import com.vaadin.data.provider.DataProvider;
-import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.data.provider.*;
 import com.vaadin.server.*;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
-import com.vaadin.ui.Grid.Column;
-import com.vaadin.ui.Grid.ItemClick;
-import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.Grid.*;
 import com.vaadin.ui.renderers.ComponentRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 import java.nio.file.*;
@@ -41,8 +38,6 @@ public class DirectoryTableWindow extends Window {
     private Button btnCancelar;
     private Button btnMover;
     private Button btnCopiar;
-
-    private final Components component = new Components();
 
     private final FileLogic viewLogicFile;
     private final DirectoryLogic viewLogicDirectory;
@@ -191,12 +186,12 @@ public class DirectoryTableWindow extends Window {
         footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
         footer.setWidth(100.0f, Unit.PERCENTAGE);
 
-        btnCancelar = component.createButtonNormal("Cancelar");
+        btnCancelar = Components.createButtonNormal("Cancelar");
         btnCancelar.addClickListener((Button.ClickEvent event) -> {
             close();
         });
 
-        btnMover = component.createButtonPrimary("Mover");
+        btnMover = Components.createButtonPrimary("Mover");
         btnMover.setEnabled(false);
         btnMover.addClickListener((Button.ClickEvent event) -> {
             Path source = Paths.get(fileTo.getPath());
@@ -213,7 +208,7 @@ public class DirectoryTableWindow extends Window {
             close();
         });
 
-        btnCopiar = component.createButtonPrimary("Copiar");
+        btnCopiar = Components.createButtonPrimary("Copiar");
         btnCopiar.setEnabled(false);
         btnCopiar.addClickListener((Button.ClickEvent event) -> {
             Path source = Paths.get(fileTo.getPath());

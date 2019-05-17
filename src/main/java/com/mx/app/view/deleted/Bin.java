@@ -20,7 +20,6 @@ public final class Bin extends VerticalLayout implements View {
     private Button btnListView;
     private Button btnGridView;
 
-    private final Components component = new Components();
     private final DirectoryLogic viewLogicDirectory = new DirectoryLogic(this);
     private final FileLogic viewLogicFile = new FileLogic(this);
 
@@ -38,7 +37,7 @@ public final class Bin extends VerticalLayout implements View {
         addComponent(buildHeader(origenPath));
 
         if (origenPath.isEmpty()) {
-            Label message = component.createLabelEmptyDirectory();
+            Label message = Components.createLabelEmptyDirectory();
             addComponent(message);
             setComponentAlignment(message, Alignment.MIDDLE_CENTER);
             setExpandRatio(message, 1);
@@ -58,7 +57,7 @@ public final class Bin extends VerticalLayout implements View {
         header.addStyleName("viewheader");
         Responsive.makeResponsive(header);
 
-        Label title = component.createLabelHeader("Eliminados");
+        Label title = Components.createLabelHeader("Eliminados");
         Component typesViews = buildViewsButtons(directory);
 
         header.addComponents(title, typesViews);
@@ -74,7 +73,7 @@ public final class Bin extends VerticalLayout implements View {
 
         HorizontalLayout viewsButtons = new HorizontalLayout();
 
-        btnListView = component.createButtonIconTiny();
+        btnListView = Components.createButtonIconTiny();
         btnListView.setIcon(FontAwesome.BARS);
         //btnListView.addStyleName(setStyle(selected));
         //btnListView.setEnabled(selected);
@@ -86,7 +85,7 @@ public final class Bin extends VerticalLayout implements View {
             cleanAndDisplay(directory);
         });
 
-        btnGridView = component.createButtonIconTiny();
+        btnGridView = Components.createButtonIconTiny();
         btnGridView.setIcon(FontAwesome.TH_LARGE);
         //btnGridView.addStyleName(setStyle(!selected));
         //btnGridView.setEnabled(!selected);
