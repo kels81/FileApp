@@ -82,7 +82,7 @@ public final class AppMenu extends CustomComponent {
     private Component buildLogOutButton() {
         Button btnLogout = new Button("Logout");
         btnLogout.setPrimaryStyleName("valo-menu-item");
-        btnLogout.setIcon(VaadinIcons.POWER_OFF);
+        btnLogout.setIcon(FontAwesome.POWER_OFF);
         btnLogout.addClickListener((ClickEvent event) -> {
 //            VaadinSession.getCurrent().getSession().invalidate();
 //            Page.getCurrent().reload();           // OTRA OPCION DE HACER LOGOUT
